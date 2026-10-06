@@ -18,7 +18,7 @@ Open http://localhost:4173. `dist/` is the deployable static site; no server or 
 - The biography, areas of focus and both projects are draft/concept content. Replace them with verified résumé details before using this as a professional record.
 - No contact address was supplied. The contact button honestly shows that contact information is pending.
 - The downloadable HTML is a brief introduction, not a verified CV.
-- `dist/assets/prosthetic-hand.png` is original AI-generated concept artwork. The interactive model is a procedural design study, not a validated clinical device.
+- `dist/assets/prosthetic-hand.webp` is original AI-generated concept artwork. The interactive model is a procedural design study, not a validated clinical device.
 
 ## Design reference
 
@@ -42,12 +42,8 @@ npm run deploy
 
 Provide `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` through your environment or GitHub Actions secrets. Never commit credentials. The included GitHub Actions workflow runs manually after those two secrets are set; the Pages project must exist first. For automatic updates, use the native Git integration above.
 
-## GitHub publication
+## Repository
 
-The connected account did not grant repository-creation permission during this build. Once authorized:
+Source repository: https://github.com/dibdaminisikh-png/Erfcv
 
-```sh
-gh repo create erfan-mohiti-portfolio --public --source . --remote origin --push
-```
-
-No live URL or remote repository exists until publication succeeds.
+Cloudflare publication still requires an authenticated Cloudflare account.

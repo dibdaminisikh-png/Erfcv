@@ -1,0 +1,13 @@
+{
+  "name": "erfan-mohiti-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "python3 -m http.server 4173 --directory dist",
+    "deploy": "wrangler pages deploy dist --project-name erfan-mohiti-portfolio"
+  },
+  "dependencies": { "three": "0.180.0" },
+  "devDependencies": { "wrangler": "4.43.0" }
+}
