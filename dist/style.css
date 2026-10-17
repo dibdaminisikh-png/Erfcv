@@ -2000,3 +2000,485 @@ footer {
     scroll-behavior: auto !important;
   }
 }
+/* Readable typography and a more expressive clinical design system. */
+.site-header .brand {
+  font-size: 12px;
+}
+.site-header .brand small {
+  font-size: 8px;
+}
+.site-header nav,
+.contact-link {
+  font-size: 14px;
+}
+.hero-content .eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.8px;
+}
+.hero-content > p:not(.eyebrow) {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #c2d8d2;
+}
+.hero-content h1 {
+  font-weight: 600;
+}
+.hero-secondary {
+  font-size: 14px;
+}
+.button {
+  font-size: 13px;
+  font-weight: 600;
+}
+.hero-signature {
+  font-size: 9px;
+}
+.hero-bottom {
+  font-size: 9px;
+}
+.practice-strip > div,
+.practice-strip strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+.intro-grid p,
+.feature-copy > p:not(.eyebrow),
+.reconstruction-copy p,
+.stage-description p,
+.about p:not(.eyebrow) {
+  font-size: 16px;
+  line-height: 1.85;
+}
+.feature-copy .case-lead {
+  font-size: 22px !important;
+  line-height: 1.55;
+}
+.eyebrow,
+.feature-copy .eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.4px;
+}
+.section-heading > p {
+  font-size: 15px;
+}
+.feature-copy h2,
+.intro h2,
+.section-heading h2 {
+  font-weight: 550;
+}
+.specialty-nav {
+  gap: 12px;
+}
+.specialty-nav a {
+  font-size: 12px;
+  padding: 12px 18px;
+  background: #e6eee8;
+  border: 1px solid #bacec3;
+  border-radius: 5px;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.specialty-nav a:hover {
+  background: #d2e9dc;
+  transform: translateY(-3px);
+}
+.case-facts dt {
+  font-size: 10px;
+  font-weight: 600;
+}
+.case-facts dd {
+  font-size: 14px;
+}
+.case-facts {
+  background: #e8efea;
+  border: 0;
+  border-left: 3px solid #6d9c8c;
+  padding: 15px 18px;
+}
+.case-facts > div {
+  grid-template-columns: 115px 1fr;
+}
+.case-visual,
+.detail-art {
+  border: 1px solid #bacfc4;
+  border-radius: 14px;
+  box-shadow: 0 24px 65px -40px #163e3866;
+  background-image:
+    radial-gradient(ellipse at 60% 40%, #ffffffb0, transparent 65%),
+    linear-gradient(135deg, #d7e6db, #f0f2e6);
+}
+.framework-visual {
+  background-image:
+    radial-gradient(ellipse at 50% 40%, #e8faf7, transparent 65%),
+    linear-gradient(135deg, #a8c8c6, #dcebe7);
+}
+.cranial-art {
+  background-image:
+    radial-gradient(ellipse, #fff8e2, transparent 65%),
+    linear-gradient(135deg, #e2d5b7, #ebe8df);
+}
+.visual-label,
+.detail-art > span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.3px;
+  padding: 8px 11px;
+  background: #ffffffb5;
+  backdrop-filter: blur(8px);
+  border: 1px solid #ffffff8c;
+  border-radius: 4px;
+  pointer-events: none;
+}
+.visual-bottom > span {
+  font-size: 9px;
+  max-width: 230px;
+}
+.visual-bottom {
+  pointer-events: none;
+}
+.visual-bottom button {
+  pointer-events: auto;
+  background: #f5fff5cc;
+}
+.technical-ring {
+  inset: 16%;
+  border-color: #83aa9670;
+}
+.technical-ring:after {
+  content: "";
+  position: absolute;
+  inset: 45% -28%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #5b96865c, transparent);
+}
+.reconstruction-card {
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid #d4dfd5;
+  background: #eef1ea;
+  box-shadow: 0 20px 50px -45px #183331;
+}
+.reconstruction-card .detail-art {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  height: 350px;
+}
+.reconstruction-copy {
+  padding: 35px;
+}
+.reconstruction-copy h3 {
+  font-size: 31px;
+}
+.text-link {
+  font-size: 14px;
+  font-weight: 600;
+}
+.project-note {
+  font-size: 12px;
+}
+.step-buttons button {
+  font-size: 16px;
+}
+.step-buttons button span {
+  font-size: 11px;
+}
+.step-buttons button.active {
+  background: linear-gradient(#aacdb908, #b4e8c522);
+  border-bottom-width: 3px;
+}
+.journey-diagram {
+  border-radius: 14px;
+  background: radial-gradient(ellipse, #568d7a33, transparent 75%);
+}
+.stage-description {
+  min-height: 210px;
+}
+.stage-description h3 {
+  font-size: 29px;
+}
+.journey-footnote {
+  font-size: 9px;
+}
+.journey-diagram > span {
+  font-size: 10px;
+}
+.journey {
+  background:
+    radial-gradient(ellipse at 0% 100%, #28594f55, transparent 65%), #102d30;
+}
+.skill-tags span {
+  font-size: 12px;
+  padding: 8px 12px;
+}
+.studio-contact {
+  background:
+    radial-gradient(ellipse at 85% 30%, #397d6255, transparent 60%), #173d38;
+}
+.studio-contact .eyebrow {
+  font-size: 10px;
+}
+footer > span,
+footer > a:last-child {
+  font-size: 12px;
+}
+.project-details > p:not(.eyebrow) {
+  font-size: 15px;
+}
+.view-controls button {
+  font-size: 13px;
+}
+.legend {
+  font-size: 13px;
+}
+.viewer-note {
+  font-size: 12px !important;
+}
+.inline-model {
+  position: absolute;
+  inset: 38px 0 55px;
+  z-index: 1;
+}
+.inline-model canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: pan-y;
+}
+.inline-model canvas:active {
+  cursor: grabbing;
+}
+.preview-ready > img {
+  opacity: 0;
+  animation: none;
+  pointer-events: none;
+}
+.inline-tools {
+  position: absolute;
+  bottom: 75px;
+  left: 25px;
+  right: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  z-index: 3;
+  pointer-events: none;
+}
+.inline-tools span {
+  font: 9px monospace;
+  letter-spacing: 0.5px;
+  color: #345e53;
+  background: #f4faf1d9;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+.inline-tools button {
+  pointer-events: auto;
+  background: #254a41;
+  color: white;
+  padding: 7px 12px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+.detail-art .inline-tools {
+  bottom: 15px;
+  left: 20px;
+  right: 20px;
+}
+.detail-art .inline-model {
+  inset: 35px 0 35px;
+}
+.detail-art > span {
+  z-index: 2;
+}
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, #7cbaa2, #bef2cb, #d9c89a);
+  z-index: 100;
+  pointer-events: none;
+}
+.js-motion .reveal {
+  transition:
+    opacity 0.85s,
+    transform 0.85s;
+  transform: translateY(35px);
+}
+.js-motion .reveal.visible {
+  transform: none;
+}
+.case-visual:after,
+.detail-art:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 44%,
+    #ddffe71c 49%,
+    #effff3c4 50%,
+    #a1e5c33d 51%,
+    transparent 58%
+  );
+  opacity: 0;
+  transform: translateY(-110%);
+}
+.case-visual.visible:after,
+.reconstruction-card.visible .detail-art:after {
+  animation: medical-reveal 1.6s ease-out both;
+}
+.feature-copy.visible .eyebrow,
+.intro.visible .eyebrow {
+  animation: label-reveal 0.9s ease-out both;
+}
+@keyframes medical-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+@keyframes label-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.motion-paused .case-visual:after,
+.motion-paused .detail-art:after {
+  display: none;
+}
+@media (max-width: 760px) {
+  .hero-content > p:not(.eyebrow) {
+    font-size: 16px;
+  }
+  .hero-content .eyebrow {
+    font-size: 9px;
+    line-height: 1.8;
+    max-width: 290px;
+  }
+  .hero-signature {
+    font-size: 8px;
+    line-height: 1.8;
+  }
+  .hero-secondary {
+    font-size: 12px;
+  }
+  .hero-content .button {
+    font-size: 12px;
+  }
+  .practice-strip > div,
+  .practice-strip strong {
+    font-size: 9px;
+  }
+  .feature-copy > p:not(.eyebrow),
+  .intro-grid p,
+  .reconstruction-copy p,
+  .about p:not(.eyebrow) {
+    font-size: 15px;
+  }
+  .feature-copy .case-lead {
+    font-size: 20px !important;
+  }
+  .eyebrow,
+  .feature-copy .eyebrow {
+    font-size: 10px;
+  }
+  .specialty-nav a {
+    font-size: 11px;
+    padding: 10px 12px;
+  }
+  .case-facts dd {
+    font-size: 12px;
+  }
+  .case-facts > div {
+    grid-template-columns: 95px 1fr;
+    gap: 8px;
+  }
+  .stage-description {
+    min-height: 225px;
+  }
+  .stage-description p {
+    font-size: 15px;
+  }
+  .stage-description h3 {
+    font-size: 25px;
+  }
+  .step-buttons button {
+    font-size: 14px;
+  }
+  .reconstruction-copy h3 {
+    font-size: 27px;
+  }
+  .inline-tools {
+    left: 15px;
+    right: 15px;
+    bottom: 78px;
+  }
+  .inline-tools span {
+    font-size: 8px;
+    max-width: 210px;
+  }
+  .visual-bottom > span {
+    font-size: 8px;
+  }
+  .visual-label,
+  .detail-art > span {
+    font-size: 9px;
+  }
+  .reconstruction-card .detail-art {
+    height: 310px;
+  }
+  .reconstruction-copy {
+    padding: 25px;
+  }
+  .studio-contact .eyebrow {
+    font-size: 8px;
+  }
+  .site-header .brand {
+    font-size: 10px;
+  }
+  .site-header .brand small {
+    font-size: 6px;
+  }
+  .contact-link {
+    font-size: 11px;
+  }
+  .project-note {
+    font-size: 11px;
+    line-height: 1.8;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js-motion .reveal {
+    transform: none;
+  }
+  .case-visual:after,
+  .detail-art:after {
+    display: none;
+  }
+  .reading-progress {
+    transition: none;
+  }
+}

@@ -241,3 +241,123 @@ document.querySelectorAll("button[data-stage]").forEach((button) =>
     document.querySelector(".journey-diagram").dataset.stage = String(index);
   }),
 );
+
+// Lightweight, on-demand implant previews. Anatomy stays inside the dialog.
+const inlinePreviews = [];
+for (const panel of document.querySelectorAll(".case-visual, .detail-art")) {
+  const image = panel.querySelector("img");
+  const key = image
+    .getAttribute("src")
+    .split("/")
+    .pop()
+    .replace("-detail.webp", "");
+  const host = document.createElement("div");
+  host.className = "inline-model";
+  host.setAttribute("aria-label", `${projects[key].title} interactive preview`);
+  panel.appendChild(host);
+  const tools = document.createElement("div");
+  tools.className = "inline-tools";
+  const hint = document.createElement("span");
+  hint.textContent = "3D PREVIEW / LOADING";
+  hint.setAttribute("role", "status");
+  const reset = document.createElement("button");
+  reset.type = "button";
+  reset.textContent = "Reset";
+  reset.setAttribute("aria-label", `Reset ${projects[key].title} preview`);
+  reset.hidden = true;
+  tools.append(hint, reset);
+  panel.appendChild(tools);
+  const state = {
+    panel,
+    host,
+    key,
+    hint,
+    reset,
+    viewer: null,
+    pending: null,
+    visible: false,
+  };
+  inlinePreviews.push(state);
+  reset.addEventListener("click", () => state.viewer?.reset());
+}
+async function activatePreview(state) {
+  if (state.viewer || state.pending) return;
+  const controller = new AbortController();
+  state.pending = controller;
+  state.hint.textContent = "LOADING INTERACTIVE PREVIEW";
+  try {
+    const { createProjectViewer } = await import("./viewer.js");
+    controller.signal.throwIfAborted();
+    const model = await createProjectViewer(state.host, state.key, {
+      signal: controller.signal,
+      implantOnly: true,
+      preview: true,
+    });
+    if (controller.signal.aborted) {
+      model.dispose();
+      return;
+    }
+    state.viewer = model;
+    state.panel.classList.add("preview-ready");
+    state.reset.hidden = false;
+    state.hint.textContent = "DRAG TO ROTATE · ARROW KEYS TO EXPLORE";
+  } catch (error) {
+    if (!controller.signal.aborted)
+      state.hint.textContent = "IMAGE PREVIEW · OPEN PROJECT FOR DETAILS";
+  } finally {
+    if (state.pending === controller) state.pending = null;
+  }
+}
+function deactivatePreview(state) {
+  state.pending?.abort();
+  state.pending = null;
+  state.viewer?.dispose();
+  state.viewer = null;
+  state.panel.classList.remove("preview-ready");
+  state.reset.hidden = true;
+}
+if ("IntersectionObserver" in window) {
+  const previewObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const state = inlinePreviews.find(
+          (item) => item.panel === entry.target,
+        );
+        state.visible = entry.isIntersecting;
+        if (state.visible && !document.hidden) activatePreview(state);
+        else deactivatePreview(state);
+      }
+    },
+    { rootMargin: "150px 0px", threshold: 0 },
+  );
+  inlinePreviews.forEach((state) => previewObserver.observe(state.panel));
+  document.addEventListener("visibilitychange", () =>
+    inlinePreviews.forEach((state) => {
+      if (document.hidden) deactivatePreview(state);
+      else if (state.visible) activatePreview(state);
+    }),
+  );
+} else {
+  inlinePreviews.forEach((state) => {
+    state.hint.textContent = "SELECT TO ACTIVATE 3D";
+    state.panel.addEventListener("pointerenter", () => activatePreview(state), {
+      once: true,
+    });
+  });
+}
+let scrollFrame = 0;
+function updateProgress() {
+  scrollFrame = 0;
+  const distance = document.documentElement.scrollHeight - innerHeight;
+  document.querySelector(".reading-progress").style.transform =
+    `scaleX(${distance > 0 ? scrollY / distance : 0})`;
+}
+addEventListener(
+  "scroll",
+  () => {
+    if (!scrollFrame) scrollFrame = requestAnimationFrame(updateProgress);
+  },
+  { passive: true },
+);
+addEventListener("resize", updateProgress);
+updateProgress();

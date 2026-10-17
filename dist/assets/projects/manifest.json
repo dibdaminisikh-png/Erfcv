@@ -2,7 +2,8 @@
   "mandibular": [
     {
       "file": "assets/projects/mandibular-0.stl",
-      "kind": "implant"
+      "kind": "implant",
+      "preview": "assets/projects/mandibular-0-preview.stl"
     },
     {
       "file": "assets/projects/mandibular-1.stl",
@@ -14,21 +15,25 @@
     },
     {
       "file": "assets/projects/mandibular-3.stl",
-      "kind": "implant"
+      "kind": "implant",
+      "preview": "assets/projects/mandibular-3-preview.stl"
     }
   ],
   "orbital": [
     {
       "file": "assets/projects/orbital-0.stl",
-      "kind": "implant"
+      "kind": "implant",
+      "preview": "assets/projects/orbital-0-preview.stl"
     },
     {
       "file": "assets/projects/orbital-1.stl",
-      "kind": "implant"
+      "kind": "implant",
+      "preview": "assets/projects/orbital-1-preview.stl"
     },
     {
       "file": "assets/projects/orbital-2.stl",
-      "kind": "implant"
+      "kind": "implant",
+      "preview": "assets/projects/orbital-2-preview.stl"
     },
     {
       "file": "assets/projects/orbital-3.stl",
@@ -42,7 +47,8 @@
   "cranial": [
     {
       "file": "assets/projects/cranial-0.stl",
-      "kind": "implant"
+      "kind": "implant",
+      "preview": "assets/projects/cranial-0-preview.stl"
     },
     {
       "file": "assets/projects/cranial-1.stl",
@@ -56,19 +62,23 @@
   "subperiosteal": [
     {
       "file": "assets/projects/subperiosteal-2.stl",
-      "kind": "implant"
+      "kind": "implant",
+      "preview": "assets/projects/subperiosteal-2-preview.stl"
     },
     {
       "file": "assets/projects/subperiosteal-3.stl",
-      "kind": "implant"
+      "kind": "implant",
+      "preview": "assets/projects/subperiosteal-3-preview.stl"
     },
     {
       "file": "assets/projects/subperiosteal-4.stl",
-      "kind": "implant"
+      "kind": "implant",
+      "preview": "assets/projects/subperiosteal-4-preview.stl"
     },
     {
       "file": "assets/projects/subperiosteal-5.stl",
-      "kind": "implant"
+      "kind": "implant",
+      "preview": "assets/projects/subperiosteal-5-preview.stl"
     },
     {
       "file": "assets/projects/subperiosteal-6.stl",

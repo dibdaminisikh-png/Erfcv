@@ -37,7 +37,7 @@ function parseSTL(buffer) {
 export async function createProjectViewer(
   container,
   category,
-  { signal, implantOnly = false } = {},
+  { signal, implantOnly = false, preview = false } = {},
 ) {
   const response = await fetch("assets/projects/manifest.json", { signal });
   if (!response.ok) throw new Error("Project manifest unavailable");
@@ -48,7 +48,10 @@ export async function createProjectViewer(
     manifest[category]
       .filter((part) => !implantOnly || part.kind === "implant")
       .map(async (part) => {
-        const response = await fetch(part.file, { signal });
+        const response = await fetch(
+          preview && part.preview ? part.preview : part.file,
+          { signal },
+        );
         if (!response.ok)
           throw new Error("Project geometry could not be loaded");
         return { ...part, buffer: await response.arrayBuffer() };
@@ -60,7 +63,7 @@ export async function createProjectViewer(
     alpha: true,
     preserveDrawingBuffer: true,
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, preview ? 1.5 : 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0xffffff, 0);
   renderer.domElement.setAttribute(
@@ -163,6 +166,7 @@ export async function createProjectViewer(
   on(
     "wheel",
     (e) => {
+      if (preview) return;
       e.preventDefault();
       zoom(e.deltaY * 0.008);
     },
