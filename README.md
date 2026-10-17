@@ -1,17 +1,8 @@
-# Erfan Mohiti — Maxillofacial Prosthesis Portfolio
+# Erfan Mohiti — Maxillofacial Design Portfolio
 
-English portfolio for Erfan Mohiti, a maxillofacial prosthesis designer at [Farin Roshaan](https://farinroshaan.com/). The site presents verified professional experience, a responsive medical-design visual system and a custom interactive Three.js model lab.
+A responsive English portfolio with four original project collections: mandibular angle, orbital floor and cheek, subperiosteal framework, and cranial reconstruction.
 
-## Interactive 3D lab
-
-- Rotate, zoom and pan each model.
-- Switch between surface, wireframe and translucent views.
-- Explore three procedural concept studies: mandibular angle, cranial plate and subperiosteal framework.
-- Open binary or ASCII `.stl` files locally. Files stay in the visitor's browser and are never uploaded.
-
-The built-in objects are illustrative concept studies. They do not represent a patient, validated device or clinical outcome. Add real portfolio models only after de-identification and confirmation that they may be published.
-
-## Local development
+## Development
 
 ```sh
 npm ci
@@ -19,16 +10,26 @@ npm run build
 npm run dev
 ```
 
-Open `http://localhost:4173`. The deployable static site lives in `dist/`.
+The static site is served on port 4173. Node.js 22 (CI) or 24 and Python 3 are required. `dist/` contains the editable website and deployable assets. The build copies the pinned Three.js distribution into `dist/assets/`.
+
+## Project explorer
+
+- Explore distinct editorial sections for facial aesthetics, frameworks and reconstruction.
+- Animate an abstract parametric surface, pause motion, or follow the four interactive design stages.
+- Reduced-motion preferences disable decorative animations.
+- Open any project to load its original geometry on demand.
+- Drag to rotate; scroll to zoom. The focused canvas also supports arrow keys and `+` / `-`.
+- Switch between surface, wireframe and implant-only views; reset the camera.
+- Close with Escape or the close button. Mobile navigation and the dialog support keyboard access.
+
+`dist/assets/projects/manifest.json` defines each project's geometry and whether a component is implant or anatomy. STL files are reduced to 25,000 triangles per component for portfolio viewing; neutral filenames and STL headers replace identifying source labels. Original archives are not included in the website. Homepage images are isolated implant WebP renders of these actual meshes; full anatomy remains in the on-demand explorer. The hero is an abstract parametric surface, not a patient model. Models are loaded only after a project is opened.
+
+These simplified meshes are presentation assets, not manufacturing files. Project descriptions do not imply validated clinical outcomes. Review publication permissions for the underlying patient-specific anatomy before public deployment.
+
+## Validation
+
+The current implementation was checked using Python Playwright with system Chromium: four project loads, view controls, keyboard camera input, interactive process stages, motion preferences, Escape/focus restoration, mobile navigation, small-screen overflow and a failed-geometry response. There is no repository test runner dependency.
 
 ## Deployment
 
-The repository includes workflows for GitHub Pages and Cloudflare Pages. For Cloudflare Pages use:
-
-- Build command: `npm ci && npm run build`
-- Output directory: `dist`
-- Production branch: `main`
-
-## Source
-
-https://github.com/dibdaminisikh-png/Erfcv
+Existing GitHub Pages and Cloudflare Pages workflows remain available. Build with `npm ci && npm run build`; output directory: `dist`. Public deployment is separate from local development.

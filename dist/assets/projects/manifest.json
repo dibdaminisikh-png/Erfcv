@@ -1,0 +1,90 @@
+{
+  "mandibular": [
+    {
+      "file": "assets/projects/mandibular-0.stl",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/mandibular-1.stl",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/mandibular-2.stl",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/mandibular-3.stl",
+      "kind": "implant"
+    }
+  ],
+  "orbital": [
+    {
+      "file": "assets/projects/orbital-0.stl",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/orbital-1.stl",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/orbital-2.stl",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/orbital-3.stl",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/orbital-4.stl",
+      "kind": "anatomy"
+    }
+  ],
+  "cranial": [
+    {
+      "file": "assets/projects/cranial-0.stl",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/cranial-1.stl",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/cranial-2.stl",
+      "kind": "anatomy"
+    }
+  ],
+  "subperiosteal": [
+    {
+      "file": "assets/projects/subperiosteal-2.stl",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/subperiosteal-3.stl",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/subperiosteal-4.stl",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/subperiosteal-5.stl",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/subperiosteal-6.stl",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/subperiosteal-7.stl",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/subperiosteal-8.stl",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/subperiosteal-9.stl",
+      "kind": "anatomy"
+    }
+  ]
+}

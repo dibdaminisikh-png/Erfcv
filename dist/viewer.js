@@ -1,22 +1,217 @@
-import * as THREE from './assets/three.module.min.js';
-const color={bone:0xd7eee2,metal:0x92d4b7,dark:0x163b30,accent:0xff9564};
-function mat(c,metalness,roughness,opacity=1){const m=new THREE.MeshStandardMaterial({color:c,metalness,roughness,transparent:opacity<1,opacity,depthWrite:opacity>=1});m.userData.defaultOpacity=opacity;return m}
-function palette(){return{bone:mat(color.bone,.05,.66),metal:mat(color.metal,.78,.25),dark:mat(color.dark,.55,.35),accent:mat(color.accent,.25,.3)}}
-function addLights(scene){scene.add(new THREE.HemisphereLight(0xdfffee,0x06100d,2.5));const key=new THREE.DirectionalLight(0xffffff,4);key.position.set(5,7,8);scene.add(key);const rim=new THREE.DirectionalLight(0x6affbd,4);rim.position.set(-5,1,-4);scene.add(rim)}
-function makeRenderer(container){const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.domElement.setAttribute('role','img');renderer.domElement.setAttribute('aria-label','Interactive 3D medical design model');container.appendChild(renderer.domElement);return renderer}
-function responsive(renderer,camera,container,render){const resize=()=>{const w=container.clientWidth,h=container.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();render()};new ResizeObserver(resize).observe(container);resize()}
-function interaction(canvas,getObject,camera,render){let down=false,button=0,last={x:0,y:0};canvas.addEventListener('pointerdown',e=>{down=true;button=e.button;last={x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!down)return;const object=getObject(),dx=e.clientX-last.x,dy=e.clientY-last.y;if(button===2){object.position.x+=dx*.006;object.position.y-=dy*.006}else{object.rotation.y+=dx*.012;object.rotation.x=THREE.MathUtils.clamp(object.rotation.x+dy*.008,-1.25,1.25)}last={x:e.clientX,y:e.clientY};render()});const end=()=>down=false;canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('wheel',e=>{e.preventDefault();camera.position.z=THREE.MathUtils.clamp(camera.position.z+e.deltaY*.008,3.8,18);render()},{passive:false})}
-function buildJaw(){const m=palette(),g=new THREE.Group();const left=new THREE.Mesh(new THREE.CapsuleGeometry(.48,2.25,8,24),m.bone);left.rotation.z=-.54;left.position.set(-1.15,.1,0);g.add(left);const right=left.clone();right.rotation.z=.54;right.position.x=1.15;g.add(right);const chin=new THREE.Mesh(new THREE.TorusGeometry(1.18,.48,20,60,Math.PI),m.bone);chin.rotation.z=Math.PI;chin.position.y=-1.1;g.add(chin);for(const x of [-1.72,1.72]){const ramus=new THREE.Mesh(new THREE.CapsuleGeometry(.42,1.5,8,24),m.bone);ramus.position.set(x,1.55,0);g.add(ramus);const condyle=new THREE.Mesh(new THREE.SphereGeometry(.52,24,18),m.bone);condyle.scale.set(1,.65,.8);condyle.position.set(x,2.55,0);g.add(condyle)}const implant=new THREE.Mesh(new THREE.CapsuleGeometry(.25,2.2,10,30),m.metal);implant.rotation.z=-.57;implant.position.set(1.31,.15,.48);implant.scale.z=.35;g.add(implant);for(let i=0;i<4;i++){const screw=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,.14,16),m.accent);screw.rotation.x=Math.PI/2;screw.position.set(.65+i*.43,-.68+i*.29,.66);g.add(screw)}g.userData.label='MANDIBULAR ANGLE / CONCEPT';return g}
-function buildCranial(){const m=palette(),g=new THREE.Group(),skullMat=mat(color.bone,.05,.66,.2);const skull=new THREE.Mesh(new THREE.SphereGeometry(2.35,48,32),skullMat);skull.scale.set(.86,1,.92);g.add(skull);const plate=new THREE.Mesh(new THREE.SphereGeometry(2.39,40,25,0,Math.PI*.75,0,Math.PI*.5),m.metal);plate.scale.set(.86,1,.92);g.add(plate);for(let i=0;i<12;i++){const a=i/12*Math.PI*1.5,screw=new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,.13,12),m.accent);screw.position.set(Math.cos(a)*1.78,1.1+Math.sin(a)*1.05,.75);screw.rotation.x=Math.PI/2;g.add(screw)}g.rotation.z=.2;g.userData.label='CRANIAL PLATE / CONCEPT';return g}
-function barBetween(a,b,material,r=.045){const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r,r,a.distanceTo(b),10),material);mesh.position.copy(a).add(b).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),b.clone().sub(a).normalize());return mesh}
-function buildSubperiosteal(){const m=palette(),g=new THREE.Group(),base=new THREE.Mesh(new THREE.TorusGeometry(1.6,.24,16,70,Math.PI),m.bone);base.rotation.z=Math.PI;g.add(base);const nodes=[];for(let i=0;i<8;i++){const a=Math.PI+i/7*Math.PI,p=new THREE.Vector3(Math.cos(a)*1.62,Math.sin(a)*1.25,.25),n=new THREE.Mesh(new THREE.SphereGeometry(.13,16,12),m.metal);n.position.copy(p);g.add(n);nodes.push(p);if(i)g.add(barBetween(nodes[i-1],p,m.metal))}for(let i=1;i<7;i++){const p=nodes[i],top=new THREE.Vector3(p.x*.74,p.y+.75,.28);g.add(barBetween(p,top,m.metal,.04));const screw=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,.16,14),m.accent);screw.rotation.x=Math.PI/2;screw.position.copy(top);g.add(screw)}g.userData.label='SUBPERIOSTEAL FRAME / CONCEPT';return g}
-function addRing(scene){const ring=new THREE.Mesh(new THREE.TorusGeometry(3.3,.009,5,120),new THREE.MeshBasicMaterial({color:0x568b74,transparent:true,opacity:.5}));ring.rotation.x=1.12;scene.add(ring)}
-function animation(container,reduced,render,rotate){let id=0,visible=true;const loop=()=>{if(!visible)return;if(!reduced)rotate();render();id=requestAnimationFrame(loop)};new IntersectionObserver(e=>{visible=e[0].isIntersecting;cancelAnimationFrame(id);if(visible)loop()}).observe(container);loop()}
-export function initHero(container,reduced){const renderer=makeRenderer(container),scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(33,1,.1,100);camera.position.set(0,.2,10);addLights(scene);const group=buildJaw();group.rotation.set(.25,-.72,-.08);group.scale.setScalar(1.08);scene.add(group);addRing(scene);const render=()=>renderer.render(scene,camera);interaction(renderer.domElement,()=>group,camera,render);container.querySelector('.model-loading').style.display='none';responsive(renderer,camera,container,render);animation(container,reduced,render,()=>group.rotation.y+=.0017)}
-function parseSTL(buffer){const view=new DataView(buffer),binary=buffer.byteLength>=84&&84+view.getUint32(80,true)*50===buffer.byteLength;if(binary){const faces=view.getUint32(80,true),positions=new Float32Array(faces*9),normals=new Float32Array(faces*9);let off=84,p=0;for(let i=0;i<faces;i++){const n=[view.getFloat32(off,true),view.getFloat32(off+4,true),view.getFloat32(off+8,true)];off+=12;for(let v=0;v<3;v++){for(let c=0;c<3;c++){positions[p]=view.getFloat32(off,true);normals[p++]=n[c];off+=4}}off+=2}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(positions,3));geo.setAttribute('normal',new THREE.BufferAttribute(normals,3));return geo}const text=new TextDecoder().decode(buffer),vertices=[],normals=[];let normal=[0,0,1];for(const line of text.split(/\r?\n/)){const n=line.trim().match(/^facet normal\s+([\-\d.eE+]+)\s+([\-\d.eE+]+)\s+([\-\d.eE+]+)/);if(n)normal=n.slice(1).map(Number);const v=line.trim().match(/^vertex\s+([\-\d.eE+]+)\s+([\-\d.eE+]+)\s+([\-\d.eE+]+)/);if(v){vertices.push(...v.slice(1).map(Number));normals.push(...normal)}}if(vertices.length<9)throw new Error('Invalid STL');const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.setAttribute('normal',new THREE.Float32BufferAttribute(normals,3));return geo}
-function normalize(object){const box=new THREE.Box3().setFromObject(object),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),scale=4.2/Math.max(size.x,size.y,size.z);object.scale.setScalar(scale);object.position.copy(center).multiplyScalar(-scale)}
-export function initLab(container,reduced){const renderer=makeRenderer(container),scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,.2,10);addLights(scene);addRing(scene);let current=buildJaw(),view='solid';current.rotation.set(.2,-.55,0);scene.add(current);const render=()=>renderer.render(scene,camera);interaction(renderer.domElement,()=>current,camera,render);
-  function applyView(next=view){view=next;current.traverse(o=>{if(!o.isMesh||!o.material)return;const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>{m.wireframe=view==='wire';if(view==='xray'){m.transparent=true;m.opacity=.24;m.depthWrite=false}else{const opacity=m.userData.defaultOpacity??1;m.opacity=opacity;m.transparent=opacity<1;m.depthWrite=opacity>=1}})});render()}
-  function setModel(name,custom){scene.remove(current);current=custom||(name==='cranial'?buildCranial():name==='subperiosteal'?buildSubperiosteal():buildJaw());current.rotation.set(.2,-.55,0);scene.add(current);camera.position.set(0,.2,10);document.querySelector('#model-name').textContent=current.userData.label;applyView()}
-  document.querySelectorAll('.model-tab').forEach(tab=>tab.addEventListener('click',()=>{document.querySelectorAll('.model-tab').forEach(t=>{t.classList.toggle('active',t===tab);t.setAttribute('aria-selected',String(t===tab))});setModel(tab.dataset.model)}));document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{const next=button.dataset.view;if(next==='reset'){current.rotation.set(.2,-.55,0);current.position.set(0,0,0);camera.position.set(0,.2,10);render();return}document.querySelectorAll('[data-view]:not([data-view=reset])').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button))});applyView(next)}));
-  const input=document.querySelector('#stl-input'),drop=document.querySelector('.drop-zone');async function open(file){if(!file||!file.name.toLowerCase().endsWith('.stl'))return;try{drop.querySelector('b').textContent='Processing model…';const geometry=parseSTL(await file.arrayBuffer());geometry.computeVertexNormals();const mesh=new THREE.Mesh(geometry,palette().metal),group=new THREE.Group();group.add(mesh);normalize(group);group.userData.label=`${file.name.toUpperCase()} / LOCAL STL`;setModel('custom',group);drop.querySelector('b').textContent='Open another STL file'}catch(error){drop.querySelector('b').textContent='This does not appear to be a valid STL';console.warn(error)}}input.addEventListener('change',e=>open(e.target.files[0]));['dragenter','dragover'].forEach(type=>container.addEventListener(type,e=>{e.preventDefault();drop.classList.add('dragging')}));['dragleave','drop'].forEach(type=>container.addEventListener(type,e=>{e.preventDefault();drop.classList.remove('dragging')}));container.addEventListener('drop',e=>open(e.dataTransfer.files[0]));container.querySelector('.viewer-loading').style.display='none';responsive(renderer,camera,container,render);animation(container,reduced,render,()=>current.rotation.y+=.001)}
+import * as THREE from "./assets/three.module.min.js";
+
+function parseSTL(buffer) {
+  const view = new DataView(buffer);
+  const count = view.getUint32(80, true);
+  if (84 + count * 50 !== buffer.byteLength)
+    throw new Error("Invalid project geometry");
+  const vertices = [];
+  const indices = [];
+  const lookup = new Map();
+  for (let triangle = 0; triangle < count; triangle++) {
+    const offset = 84 + triangle * 50 + 12;
+    for (let vertex = 0; vertex < 3; vertex++) {
+      const point = [0, 1, 2].map((axis) =>
+        view.getFloat32(offset + (vertex * 3 + axis) * 4, true),
+      );
+      const key = point.join(",");
+      let index = lookup.get(key);
+      if (index === undefined) {
+        index = vertices.length / 3;
+        lookup.set(key, index);
+        vertices.push(...point);
+      }
+      indices.push(index);
+    }
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(vertices, 3),
+  );
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+export async function createProjectViewer(
+  container,
+  category,
+  { signal, implantOnly = false } = {},
+) {
+  const response = await fetch("assets/projects/manifest.json", { signal });
+  if (!response.ok) throw new Error("Project manifest unavailable");
+  const manifest = await response.json();
+  if (!manifest[category]?.length)
+    throw new Error("Project geometry unavailable");
+  const sources = await Promise.all(
+    manifest[category]
+      .filter((part) => !implantOnly || part.kind === "implant")
+      .map(async (part) => {
+        const response = await fetch(part.file, { signal });
+        if (!response.ok)
+          throw new Error("Project geometry could not be loaded");
+        return { ...part, buffer: await response.arrayBuffer() };
+      }),
+  );
+  signal?.throwIfAborted();
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true,
+    preserveDrawingBuffer: true,
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.setClearColor(0xffffff, 0);
+  renderer.domElement.setAttribute(
+    "aria-label",
+    "Interactive project model. Use arrow keys to rotate and plus or minus to zoom.",
+  );
+  renderer.domElement.tabIndex = 0;
+  const scene = new THREE.Scene();
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x687967, 2.4));
+  for (const [x, y, z, intensity] of [
+    [-4, -6, 8, 3],
+    [6, 2, 4, 2],
+  ]) {
+    const light = new THREE.DirectionalLight(0xffffff, intensity);
+    light.position.set(x, y, z);
+    scene.add(light);
+  }
+  const pivot = new THREE.Group();
+  const model = new THREE.Group();
+  try {
+    for (const source of sources) {
+      const mesh = new THREE.Mesh(
+        parseSTL(source.buffer),
+        new THREE.MeshStandardMaterial({
+          color: source.kind === "implant" ? 0x397e70 : 0xc9c9bd,
+          metalness: source.kind === "implant" ? 0.28 : 0,
+          roughness: source.kind === "implant" ? 0.38 : 0.8,
+          side: THREE.DoubleSide,
+        }),
+      );
+      mesh.userData.kind = source.kind;
+      model.add(mesh);
+    }
+  } catch (error) {
+    model.traverse((o) => {
+      o.geometry?.dispose();
+      o.material?.dispose();
+    });
+    renderer.dispose();
+    throw error;
+  }
+  const bounds = new THREE.Box3().setFromObject(model);
+  const center = bounds.getCenter(new THREE.Vector3());
+  const scale = 4 / Math.max(...bounds.getSize(new THREE.Vector3()).toArray());
+  model.position.copy(center).multiplyScalar(-scale);
+  model.scale.setScalar(scale);
+  pivot.add(model);
+  scene.add(pivot);
+  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+  camera.up.set(0, 0, 1);
+  const render = () => renderer.render(scene, camera);
+  let distance = 9.5;
+  const positionCamera = () => {
+    camera.position.set(0, -distance, distance * 0.14);
+    camera.lookAt(0, 0, 0);
+  };
+  const reset = () => {
+    pivot.rotation.set(0, 0, -0.35);
+    distance = 9.5;
+    positionCamera();
+    render();
+  };
+  const resize = () => {
+    const width = container.clientWidth,
+      height = container.clientHeight;
+    if (!width || !height) return;
+    renderer.setSize(width, height);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    render();
+  };
+  container.appendChild(renderer.domElement);
+  const observer = new ResizeObserver(resize);
+  observer.observe(container);
+  const events = new AbortController();
+  const on = (name, listener, options = {}) =>
+    renderer.domElement.addEventListener(name, listener, {
+      ...options,
+      signal: events.signal,
+    });
+  let drag;
+  on("pointerdown", (e) => {
+    drag = { x: e.clientX, y: e.clientY };
+    renderer.domElement.setPointerCapture(e.pointerId);
+  });
+  on("pointermove", (e) => {
+    if (!drag) return;
+    pivot.rotation.z += (e.clientX - drag.x) * 0.008;
+    pivot.rotation.x += (e.clientY - drag.y) * 0.008;
+    drag = { x: e.clientX, y: e.clientY };
+    render();
+  });
+  on("pointerup", () => (drag = null));
+  on("pointercancel", () => (drag = null));
+  const zoom = (value) => {
+    distance = THREE.MathUtils.clamp(distance + value, 4.5, 16);
+    positionCamera();
+    render();
+  };
+  on(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      zoom(e.deltaY * 0.008);
+    },
+    { passive: false },
+  );
+  on("keydown", (e) => {
+    if (
+      ![
+        "ArrowLeft",
+        "ArrowRight",
+        "ArrowUp",
+        "ArrowDown",
+        "+",
+        "=",
+        "-",
+      ].includes(e.key)
+    )
+      return;
+    e.preventDefault();
+    if (e.key === "ArrowLeft") pivot.rotation.z -= 0.15;
+    if (e.key === "ArrowRight") pivot.rotation.z += 0.15;
+    if (e.key === "ArrowUp") pivot.rotation.x -= 0.15;
+    if (e.key === "ArrowDown") pivot.rotation.x += 0.15;
+    if (["+", "="].includes(e.key)) zoom(-0.5);
+    if (e.key === "-") zoom(0.5);
+    render();
+  });
+  resize();
+  reset();
+  return {
+    reset,
+    setView(view) {
+      model.traverse((mesh) => {
+        if (!mesh.isMesh) return;
+        mesh.visible = view !== "implant" || mesh.userData.kind === "implant";
+        mesh.material.wireframe = view === "wire";
+      });
+      render();
+    },
+    dispose() {
+      events.abort();
+      observer.disconnect();
+      model.traverse((mesh) => {
+        mesh.geometry?.dispose();
+        mesh.material?.dispose();
+      });
+      renderer.dispose();
+      renderer.forceContextLoss();
+      renderer.domElement.remove();
+    },
+  };
+}
