@@ -361,3 +361,66 @@ addEventListener(
 );
 addEventListener("resize", updateProgress);
 updateProgress();
+
+// Update only on pointer events; no permanent animation loop or cursor capture.
+const pointerHalo = document.createElement("div");
+pointerHalo.className = "pointer-halo";
+pointerHalo.setAttribute("aria-hidden", "true");
+document.body.appendChild(pointerHalo);
+const hoverPointer = matchMedia("(hover: hover) and (pointer: fine)");
+let pointerFrame = 0,
+  pointerPosition,
+  spotlightPanel;
+for (const panel of document.querySelectorAll(
+  ".case-visual, .detail-art, .about-mark",
+)) {
+  const spotlight = document.createElement("div");
+  spotlight.className = "panel-spotlight";
+  spotlight.setAttribute("aria-hidden", "true");
+  panel.appendChild(spotlight);
+}
+function hidePointerGlow() {
+  pointerHalo.classList.remove("is-visible");
+  if (pointerFrame) cancelAnimationFrame(pointerFrame);
+  pointerFrame = 0;
+  pointerPosition = null;
+  spotlightPanel = null;
+}
+document.addEventListener(
+  "pointermove",
+  (event) => {
+    if (
+      !hoverPointer.matches ||
+      reducedMotion.matches ||
+      motionPaused ||
+      event.pointerType === "touch"
+    )
+      return;
+    pointerPosition = { x: event.clientX, y: event.clientY };
+    spotlightPanel = event.target.closest(
+      ".case-visual, .detail-art, .about-mark",
+    );
+    if (pointerFrame) return;
+    pointerFrame = requestAnimationFrame(() => {
+      pointerFrame = 0;
+      if (!pointerPosition) return;
+      const { x, y } = pointerPosition;
+      pointerHalo.style.transform = `translate3d(${x - 240}px,${y - 240}px,0)`;
+      pointerHalo.classList.add("is-visible");
+      if (spotlightPanel) {
+        const bounds = spotlightPanel.getBoundingClientRect();
+        spotlightPanel.style.setProperty("--spot-x", `${x - bounds.left}px`);
+        spotlightPanel.style.setProperty("--spot-y", `${y - bounds.top}px`);
+      }
+    });
+  },
+  { passive: true },
+);
+document.documentElement.addEventListener("pointerleave", hidePointerGlow);
+window.addEventListener("blur", hidePointerGlow);
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) hidePointerGlow();
+});
+motionButton.addEventListener("click", hidePointerGlow);
+reducedMotion.addEventListener("change", hidePointerGlow);
+hoverPointer.addEventListener("change", hidePointerGlow);

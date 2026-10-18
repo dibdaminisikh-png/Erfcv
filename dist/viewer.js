@@ -88,7 +88,7 @@ export async function createProjectViewer(
       const mesh = new THREE.Mesh(
         parseSTL(source.buffer),
         new THREE.MeshStandardMaterial({
-          color: source.kind === "implant" ? 0x397e70 : 0xc9c9bd,
+          color: source.kind === "implant" ? 0x83c99e : 0xc9c9bd,
           metalness: source.kind === "implant" ? 0.28 : 0,
           roughness: source.kind === "implant" ? 0.38 : 0.8,
           side: THREE.DoubleSide,

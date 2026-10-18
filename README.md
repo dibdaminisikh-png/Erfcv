@@ -1,6 +1,6 @@
 # Erfan Mohiti — Maxillofacial Design Portfolio
 
-A responsive English portfolio with four original project collections: mandibular angle, orbital floor and cheek, subperiosteal framework, and cranial reconstruction.
+A dark evergreen English portfolio with four original project collections: mandibular angle, orbital floor and cheek, subperiosteal framework, and cranial reconstruction.
 
 ## Development
 
@@ -16,7 +16,9 @@ The static site is served on port 4173. Node.js 22 (CI) or 24 and Python 3 are r
 
 - Explore distinct editorial sections for facial aesthetics, frameworks and reconstruction.
 - Animate an abstract parametric surface, pause motion, or follow the four interactive design stages.
+- A subtle pointer glow and local panel spotlights follow fine-pointer movement; touch and reduced-motion modes disable them.
 - Reduced-motion preferences disable decorative animations.
+- `dist/dark.css` defines the site-wide dark palette, including the full project explorer.
 - Rotate lightweight implants directly in the page; open a project to load full anatomical context.
 - Drag to rotate; scroll to zoom. The focused canvas also supports arrow keys and `+` / `-`.
 - Switch between surface, wireframe and implant-only views; reset the camera.
