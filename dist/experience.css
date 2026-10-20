@@ -1,0 +1,1141 @@
+/* Connected details and a single, restrained motion language. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+html.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.practice-strip {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 80% 80%, #9ab87810, transparent 60%),
+    linear-gradient(110deg, #122b24, #0e211d 55%, #1b2d22);
+  border-block: 1px solid #53735366;
+  overflow: hidden;
+}
+.practice-strip > .wrap {
+  display: block;
+  position: relative;
+  padding-block: 23px 28px;
+}
+.equation-intro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #83a48b;
+  font: 8px/1.5 monospace;
+  letter-spacing: 1.2px;
+}
+.equation-intro > span:last-child {
+  margin-left: auto;
+  color: #648271;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+.equation-marker {
+  width: 4px;
+  height: 4px;
+  background: #b5d5a4;
+  transform: rotate(45deg);
+  box-shadow: 0 0 9px #a4d89235;
+}
+.design-equation {
+  display: grid;
+  grid-template-columns: 1fr auto 1.05fr auto 1.15fr auto 1.35fr;
+  align-items: center;
+  gap: 19px;
+  padding-top: 18px;
+}
+.concept-node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 12px 0;
+}
+.concept-icon {
+  flex: none;
+  width: 41px;
+  height: 46px;
+  position: relative;
+}
+.concept-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #a6c7ad;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.concept-icon svg path {
+  stroke-dasharray: 220;
+  stroke-dashoffset: 0;
+}
+.concept-node > div:last-child {
+  min-width: 0;
+}
+.concept-kicker {
+  display: block;
+  color: #718f7b;
+  font: 7px/1.5 monospace;
+  letter-spacing: 0.8px;
+  margin-bottom: 7px;
+}
+.practice-strip .concept-title {
+  display: block;
+  color: #cfdfce;
+  font-size: 12px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.concept-node small {
+  display: block;
+  color: #7e9d87;
+  font-size: 9px;
+  letter-spacing: 0.1px;
+  line-height: 1.5;
+  margin-top: 5px;
+}
+.practice-strip .concept-operator {
+  font:
+    19px/1 Georgia,
+    serif;
+  color: #749b7c;
+  align-self: center;
+  padding-bottom: 7px;
+}
+.concept-fit {
+  padding: 17px 19px;
+  border: 1px solid #75976b55;
+  border-radius: 7px;
+  background: linear-gradient(125deg, #b7d9a70e, #a1cf9c03);
+}
+.concept-fit .concept-icon svg {
+  stroke: #c6e5b6;
+}
+.practice-strip .concept-fit .concept-title {
+  color: #d2e7be;
+  font-size: 13px;
+}
+.concept-fit .concept-kicker {
+  color: #9eba8d;
+}
+.equation-conduit {
+  position: absolute;
+  bottom: 0;
+  left: 64px;
+  right: 64px;
+  height: 1px;
+  overflow: hidden;
+  background: linear-gradient(90deg, transparent, #71906b44, transparent);
+}
+.equation-conduit i {
+  display: block;
+  width: 18%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c2e1aa99, transparent);
+  transform: translateX(-100%);
+}
+.practice-strip.in-view .equation-conduit i {
+  animation: equation-trace 8s cubic-bezier(0.3, 0, 0.3, 1) infinite;
+}
+.experience-motion .practice-strip:not(.is-revealed) .concept-node {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.concept-node {
+  transition:
+    opacity 0.8s,
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.concept-craft {
+  transition-delay: 0.1s;
+}
+.concept-insight {
+  transition-delay: 0.2s;
+}
+.concept-fit {
+  transition-delay: 0.3s;
+}
+.experience-motion .practice-strip.is-revealed .concept-icon svg path {
+  animation: concept-draw 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Larger type, travelling active surface, and fine corner details. */
+.case-index {
+  top: 10px;
+  gap: 3px;
+  padding: 5px;
+  border: 1px solid #4b655480;
+  border-radius: 10px;
+  background: #0c1b17ec;
+  box-shadow:
+    0 12px 35px -22px #000c,
+    inset 0 1px #b4d9b50a;
+  backdrop-filter: blur(22px);
+  isolation: isolate;
+}
+.case-index:before {
+  content: "";
+  position: absolute;
+  left: var(--active-left, 5px);
+  top: 5px;
+  bottom: 5px;
+  width: var(--active-width, 14%);
+  background: linear-gradient(135deg, #2c4938a8, #1a3025a8);
+  border: 1px solid #88b18d42;
+  border-radius: 6px;
+  z-index: -1;
+  transition:
+    left 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px #b6d6b61a;
+  pointer-events: none;
+}
+.case-index a {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 62px;
+  padding: 12px 8px;
+  border: 0;
+  border-radius: 6px;
+  color: #96b09e;
+  font-size: 13px;
+  overflow: hidden;
+}
+.case-index a b {
+  font-weight: 400;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.3s;
+}
+.case-index a span {
+  display: grid;
+  place-items: center;
+  margin: 0;
+  width: 23px;
+  height: 23px;
+  border: 1px solid #526f5945;
+  border-radius: 4px;
+  color: #6e957a;
+  font: 10px monospace;
+  transition:
+    color 0.3s,
+    border-color 0.3s,
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.case-index a:after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 5px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c3e7bb, transparent);
+  transform: scaleX(0);
+  opacity: 0;
+  transition:
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s;
+}
+.case-index a.active,
+.case-index a:hover {
+  background: transparent;
+  border: 0;
+  color: #e0eedc;
+}
+.case-index a.active:after {
+  transform: scaleX(0.7);
+  opacity: 0.65;
+}
+.case-index a.active span {
+  color: #c9e6bb;
+  border-color: #95bb8555;
+}
+.case-index a:hover span {
+  transform: translateY(-2px) rotate(-6deg);
+  color: #d4edca;
+  border-color: #9bbd89;
+}
+.case-index a:hover b {
+  transform: translateY(-1px);
+}
+.case-study {
+  scroll-margin-top: 104px;
+}
+
+/* Separate reveal families; no model is continuously animated by scrolling. */
+.experience-motion [data-reveal="case"] .case-layout {
+  transition:
+    opacity 1.05s,
+    transform 1.15s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 1.15s;
+}
+.experience-motion [data-reveal="case"]:not(.is-revealed) .case-layout {
+  opacity: 0;
+  transform: translate3d(0, 44px, 0) scale(0.986);
+}
+.experience-motion [data-reveal="case"] .case-heading {
+  transition:
+    opacity 0.8s,
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.experience-motion [data-reveal="case"]:not(.is-revealed) .case-heading {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.experience-motion [data-reveal="case"].is-revealed .case-layout {
+  box-shadow: 0 22px 65px -50px #80b58121;
+}
+.experience-motion [data-reveal="editorial"] > * {
+  transition:
+    opacity 0.8s,
+    transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.experience-motion [data-reveal="editorial"] > :nth-child(2) {
+  transition-delay: 0.09s;
+}
+.experience-motion [data-reveal="editorial"] > :nth-child(3) {
+  transition-delay: 0.16s;
+}
+.experience-motion [data-reveal="editorial"] > :nth-child(4) {
+  transition-delay: 0.23s;
+}
+.experience-motion [data-reveal="editorial"]:not(.is-revealed) > * {
+  opacity: 0;
+  transform: translateY(25px);
+}
+.experience-motion [data-reveal="sculpture"] {
+  transition:
+    opacity 1s,
+    scale 1.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.experience-motion [data-reveal="sculpture"]:not(.is-revealed) {
+  opacity: 0;
+  scale: 0.95;
+}
+.experience-motion [data-reveal="technical"] {
+  transition:
+    opacity 1s,
+    clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.experience-motion [data-reveal="technical"]:not(.is-revealed) {
+  opacity: 0;
+  clip-path: inset(0 18% 0 0 round 10px);
+}
+.experience-motion [data-reveal="technical"].is-revealed {
+  clip-path: inset(0 round 10px);
+}
+
+/* A subtle field of light, with halftone grain instead of a replacement cursor. */
+.halftone-light {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 420px;
+  height: 420px;
+  pointer-events: none;
+  z-index: 45;
+  opacity: 0;
+  transition: opacity 0.45s;
+  mix-blend-mode: screen;
+  contain: strict;
+}
+.halftone-light.is-visible {
+  opacity: 1;
+}
+.halftone-light:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, #bce9c765 0.7px, transparent 1.1px);
+  background-size: 5px 5px;
+  mask-image: radial-gradient(circle, #0009, transparent 66%);
+  opacity: 0.29;
+}
+.halftone-light:after {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  background: radial-gradient(circle, #b1e1b80b, transparent 66%);
+}
+
+/* Patient-specific surgical planning, in the existing technical palette. */
+.journey {
+  --process-progress: 25%;
+  padding-block: 90px;
+}
+.journey-layout {
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 65px;
+  margin-top: 45px;
+}
+.journey .section-heading > p {
+  font-size: 13px;
+  line-height: 1.85;
+  max-width: 350px;
+}
+.journey-diagram {
+  height: 475px;
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at 50% 45%, #44634626, transparent 65%),
+    linear-gradient(140deg, #0d201a, #10221c);
+  border: 1px solid #526e4d70;
+  box-shadow:
+    inset 0 1px #bad7ad0b,
+    0 20px 65px -45px #0009;
+}
+.journey-diagram .scan-grid {
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse, #000, transparent 78%);
+  opacity: 0.6;
+}
+.process-hud {
+  position: absolute;
+  top: 21px;
+  left: 22px;
+  right: 22px;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  color: #8da78e;
+  font: 8px/1.6 monospace;
+  letter-spacing: 0.65px;
+}
+.process-hud > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.process-hud i {
+  width: 4px;
+  height: 4px;
+  background: #b3d39e;
+  box-shadow: 0 0 12px #b4db9b33;
+}
+.process-stage-code {
+  color: #a3be98;
+  font-size: 7px;
+  white-space: nowrap;
+}
+.journey-model {
+  position: absolute;
+  inset: 57px 0 83px;
+}
+.journey-canvas {
+  position: absolute;
+  inset: 0;
+}
+.journey-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.journey-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.4s;
+}
+.journey-ready .journey-poster {
+  opacity: 0;
+}
+.operative-scanner {
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #c3e3ba9c 15%,
+    #d3f3d1,
+    #c3e3ba9c 85%,
+    transparent
+  );
+  box-shadow: 0 0 14px #acf6b435;
+  pointer-events: none;
+  opacity: 0.8;
+}
+.operative-scanner i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -20px;
+  height: 40px;
+  background: linear-gradient(
+    transparent,
+    #b3e2be0e 45%,
+    #c6f6c31a 50%,
+    transparent
+  );
+}
+.operative-scanner span {
+  position: absolute;
+  left: 3%;
+  top: -13px;
+  color: #92b598;
+  font: 6px monospace;
+  letter-spacing: 1px;
+  opacity: 0.6;
+}
+.lesion-reticle {
+  --detection: 0;
+  position: absolute;
+  left: var(--point-x, 55%);
+  top: var(--point-y, 60%);
+  width: 69px;
+  height: 69px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: calc(0.32 + var(--detection) * 0.68);
+  background:
+    linear-gradient(#e6b499, #e6b499) left top/11px 1px no-repeat,
+    linear-gradient(#e6b499, #e6b499) left top/1px 11px no-repeat,
+    linear-gradient(#e6b499, #e6b499) right top/11px 1px no-repeat,
+    linear-gradient(#e6b499, #e6b499) right top/1px 11px no-repeat,
+    linear-gradient(#e6b499, #e6b499) left bottom/11px 1px no-repeat,
+    linear-gradient(#e6b499, #e6b499) left bottom/1px 11px no-repeat,
+    linear-gradient(#e6b499, #e6b499) right bottom/11px 1px no-repeat,
+    linear-gradient(#e6b499, #e6b499) right bottom/1px 11px no-repeat;
+}
+.lesion-reticle:before {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border: 1px solid #e3ac861f;
+  border-radius: 50%;
+  scale: calc(1 + var(--detection) * 0.15);
+}
+.lesion-reticle span {
+  position: absolute;
+  top: 50%;
+  left: 79px;
+  white-space: nowrap;
+  color: #dab296;
+  font: 7px monospace;
+  letter-spacing: 0.8px;
+}
+.lesion-reticle span:before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: calc(100% + 5px);
+  width: 19px;
+  height: 1px;
+  background: #dab29655;
+}
+.journey-diagram:not([data-stage="0"]) .operative-scanner {
+  opacity: 0;
+}
+.journey-diagram[data-stage="2"] .lesion-reticle,
+.journey-diagram[data-stage="3"] .lesion-reticle {
+  display: none;
+}
+.process-readout {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 57px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.scan-readout {
+  font: 7px/1.5 monospace;
+  letter-spacing: 0.8px;
+  color: #a4bea0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.scan-readout:before {
+  content: "";
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #caac8e;
+}
+.process-orientation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6d8f79;
+  font: 7px monospace;
+}
+.process-orientation i {
+  width: 25px;
+  height: 1px;
+  background: #6d8f7955;
+}
+.process-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid #4d6b493b;
+  background: #12231d66;
+}
+.process-bottom #diagram-label {
+  position: static;
+  font: 7px/1.6 monospace;
+  letter-spacing: 0.6px;
+  color: #b0c4a5;
+}
+.process-bottom > span:last-child {
+  color: #68866f;
+  font: 6px/1.5 monospace;
+  letter-spacing: 0.5px;
+}
+.journey-loading .journey-model:after {
+  content: "";
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  height: 1px;
+  bottom: 18px;
+  background: linear-gradient(90deg, transparent, #b4d49e, transparent);
+  animation: planning-load 1.6s ease-in-out infinite;
+}
+.step-buttons {
+  gap: 4px;
+}
+.step-buttons button {
+  position: relative;
+  padding: 14px 7px 15px;
+  border: 1px solid transparent;
+  border-bottom-color: #476247;
+  border-radius: 5px 5px 0 0;
+  font-size: 13px;
+  color: #8ea78f;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    border-color 0.3s;
+}
+.step-buttons button span {
+  font: 6px/1.5 monospace;
+  letter-spacing: 0.5px;
+  margin-bottom: 9px;
+  color: #6d8b72;
+  white-space: nowrap;
+}
+.step-buttons button.active {
+  background: linear-gradient(transparent, #a5d39214);
+  border-bottom-color: #c4dfaa;
+  color: #e0edcf;
+}
+.step-buttons button.active span {
+  color: #b2cba1;
+}
+.step-buttons button.completed {
+  border-bottom-color: #728e63;
+  color: #b2c8a6;
+}
+.step-buttons button:hover {
+  color: #f0f7e8;
+  background: #a5d39208;
+}
+.process-progress {
+  height: 2px;
+  margin-top: -1px;
+  overflow: hidden;
+  background: #42613c30;
+  position: relative;
+}
+.process-progress i {
+  display: block;
+  width: var(--process-progress);
+  height: 100%;
+  background: linear-gradient(90deg, #5a8457, #b6d595);
+  transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stage-description {
+  min-height: 265px;
+  padding-top: 29px;
+}
+.stage-description .stage-category {
+  font: 8px/1.5 monospace;
+  letter-spacing: 1px;
+  color: #91ae7e;
+  margin-bottom: 13px;
+}
+.stage-description h3 {
+  font-size: 29px;
+  line-height: 1.2;
+  color: #dbe8d4;
+  letter-spacing: -0.7px;
+  margin-bottom: 18px;
+}
+.stage-description #stage-copy {
+  max-width: 460px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: #a5bba4;
+  margin-bottom: 19px;
+}
+.stage-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.stage-tags span {
+  color: #92ac8b;
+  font: 7px monospace;
+  letter-spacing: 0.65px;
+  padding: 6px 8px;
+  border: 1px solid #49613f;
+  border-radius: 3px;
+}
+.sequence-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #3c5337;
+}
+.sequence-play,
+.sequence-next {
+  background: transparent;
+  padding: 5px 0;
+  font-size: 11px;
+  color: #b5cea6;
+}
+.sequence-play {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sequence-play > span {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 1px solid #718b5e;
+  border-radius: 50%;
+  color: #c6dfa9;
+  font-size: 13px;
+}
+.sequence-next {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.sequence-next span {
+  transition: transform 0.3s;
+}
+.sequence-next:hover span {
+  transform: translateX(4px);
+}
+.sequence-play:hover,
+.sequence-next:hover {
+  color: #edf5d8;
+}
+.journey-footnote {
+  margin-top: 21px;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+@keyframes equation-trace {
+  0% {
+    transform: translateX(-100%);
+  }
+  70%,
+  100% {
+    transform: translateX(660%);
+  }
+}
+@keyframes concept-draw {
+  from {
+    stroke-dashoffset: 220;
+    opacity: 0.2;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+@keyframes planning-load {
+  50% {
+    opacity: 0.25;
+    scale: 0.6 1;
+  }
+}
+@media (min-width: 1500px) {
+  .case-index a {
+    font-size: 14px;
+  }
+  .concept-node {
+    gap: 18px;
+  }
+  .practice-strip .concept-title {
+    font-size: 13px;
+  }
+}
+@media (max-width: 1150px) {
+  .design-equation {
+    gap: 12px;
+  }
+  .concept-node {
+    gap: 9px;
+  }
+  .concept-icon {
+    width: 32px;
+    height: 39px;
+  }
+  .concept-kicker {
+    font-size: 6px;
+  }
+  .practice-strip .concept-title {
+    font-size: 10px;
+    letter-spacing: 0.7px;
+  }
+  .concept-node small {
+    font-size: 8px;
+  }
+  .concept-fit {
+    padding: 14px 12px;
+  }
+  .practice-strip .concept-fit .concept-title {
+    font-size: 11px;
+  }
+  .case-index {
+    grid-template-columns: repeat(7, minmax(150px, 1fr));
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .case-index::-webkit-scrollbar {
+    display: none;
+  }
+  .case-index a {
+    font-size: 13px;
+    min-height: 58px;
+  }
+  .journey-layout {
+    gap: 32px;
+  }
+  .journey-diagram {
+    height: 460px;
+  }
+  .process-bottom > span:last-child {
+    display: none;
+  }
+  .stage-description h3 {
+    font-size: 26px;
+  }
+  .step-buttons button {
+    font-size: 11px;
+  }
+  .step-buttons button span {
+    font-size: 5.5px;
+  }
+  .process-hud {
+    font-size: 7px;
+    letter-spacing: 0.2px;
+  }
+}
+@media (max-width: 800px) {
+  .practice-strip > .wrap {
+    padding-block: 22px 25px;
+  }
+  .design-equation {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 24px;
+    padding-top: 20px;
+  }
+  .concept-operator {
+    display: none;
+  }
+  .concept-node {
+    padding: 11px 0;
+    gap: 13px;
+  }
+  .concept-fit {
+    padding: 14px 13px;
+  }
+  .concept-icon {
+    width: 37px;
+    height: 43px;
+  }
+  .concept-kicker {
+    font-size: 7px;
+  }
+  .practice-strip .concept-title {
+    font-size: 11px;
+  }
+  .concept-node small {
+    font-size: 9px;
+  }
+  .equation-intro > span:last-child {
+    font-size: 6px;
+  }
+  .equation-conduit {
+    left: 35px;
+    right: 35px;
+  }
+  .case-index {
+    top: 6px;
+    border-radius: 8px;
+  }
+  .case-index a {
+    min-height: 54px;
+  }
+  .case-study {
+    scroll-margin-top: 91px;
+  }
+  .journey {
+    padding-block: 65px;
+  }
+  .journey-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-top: 32px;
+  }
+  .journey-diagram {
+    height: 460px;
+  }
+  .journey-controls {
+    max-width: none;
+  }
+  .process-hud {
+    font-size: 8px;
+    letter-spacing: 0.4px;
+  }
+  .process-bottom > span:last-child {
+    display: block;
+  }
+  .step-buttons button {
+    font-size: 13px;
+    padding: 15px 8px;
+  }
+  .step-buttons button span {
+    font-size: 6px;
+  }
+  .stage-description {
+    min-height: 240px;
+  }
+  .stage-description h3 {
+    font-size: 29px;
+  }
+  .stage-description #stage-copy {
+    max-width: none;
+  }
+  .sequence-actions {
+    margin-top: 17px;
+  }
+  .halftone-light {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  .equation-intro {
+    font-size: 7px;
+  }
+  .equation-intro > span:last-child {
+    display: none;
+  }
+  .design-equation {
+    gap: 10px 16px;
+  }
+  .concept-node {
+    gap: 9px;
+  }
+  .concept-icon {
+    width: 29px;
+    height: 37px;
+  }
+  .concept-kicker {
+    font-size: 5.5px;
+    letter-spacing: 0.45px;
+  }
+  .practice-strip .concept-title {
+    font-size: 9px;
+    letter-spacing: 0.45px;
+  }
+  .concept-node small {
+    font-size: 7px;
+    line-height: 1.6;
+  }
+  .concept-fit {
+    padding: 12px 9px;
+    gap: 7px;
+  }
+  .practice-strip .concept-fit .concept-title {
+    font-size: 9px;
+  }
+  .equation-conduit {
+    left: 21px;
+    right: 21px;
+  }
+  .case-index {
+    margin-inline: -4px;
+  }
+  .case-index a {
+    font-size: 13px;
+  }
+  .journey-diagram {
+    height: 405px;
+  }
+  .journey-model {
+    inset: 57px 0 78px;
+  }
+  .process-hud {
+    left: 15px;
+    right: 15px;
+    font-size: 6px;
+    letter-spacing: 0.1px;
+  }
+  .process-stage-code {
+    font-size: 6px;
+  }
+  .process-readout {
+    left: 15px;
+    right: 15px;
+  }
+  .process-bottom {
+    padding: 14px 15px;
+  }
+  .process-bottom #diagram-label {
+    font-size: 6px;
+  }
+  .process-bottom > span:last-child {
+    display: none;
+  }
+  .lesion-reticle {
+    width: 48px;
+    height: 48px;
+  }
+  .lesion-reticle span {
+    font-size: 5px;
+    left: 57px;
+    letter-spacing: 0.3px;
+  }
+  .lesion-reticle span:before {
+    width: 10px;
+  }
+  .step-buttons {
+    gap: 2px;
+  }
+  .step-buttons button {
+    font-size: 11px;
+    padding-inline: 5px;
+  }
+  .step-buttons button span {
+    font-size: 4.5px;
+    letter-spacing: 0.2px;
+  }
+  .stage-description h3 {
+    font-size: 27px;
+  }
+  .stage-description .stage-category {
+    font-size: 7px;
+  }
+  .stage-tags span {
+    font-size: 6px;
+  }
+  .journey-footnote {
+    font-size: 6px;
+  }
+  .sequence-play,
+  .sequence-next {
+    font-size: 10px;
+  }
+  .journey .section-heading > p {
+    font-size: 12px;
+  }
+  .operative-scanner span {
+    font-size: 5px;
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .halftone-light {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .halftone-light,
+  .operative-scanner {
+    display: none;
+  }
+  .practice-strip .concept-icon svg path,
+  .practice-strip.in-view .equation-conduit i,
+  .journey-loading .journey-model:after {
+    animation: none;
+  }
+  .case-index:before,
+  .case-index a,
+  .case-index a span,
+  .case-index a b,
+  .case-index a:after,
+  .process-progress i,
+  .journey-poster,
+  .sequence-next span {
+    transition: none;
+  }
+  .case-index a:hover span,
+  .case-index a:hover b {
+    transform: none;
+  }
+  [data-reveal],
+  [data-reveal] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    scale: 1 !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+}
+
+html {
+  scroll-padding-top: 105px;
+}
+.case-study {
+  scroll-margin-top: 0;
+}
+
+.step-buttons button span {
+  font-size: 7px;
+}
+@media (max-width: 480px) {
+  .step-buttons button span {
+    font-size: 0;
+  }
+  .step-buttons button span:before {
+    content: attr(data-step-index);
+    font: 8px/1.5 monospace;
+    letter-spacing: 1px;
+  }
+}

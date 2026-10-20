@@ -1,29 +1,5 @@
-const projects = {
-  mandibular: {
-    code: "EM—001 / AESTHETIC",
-    title: "Mandibular angle",
-    summary:
-      "Bilateral angle implant components presented alongside mandibular and maxillary anatomy. Rotate the model to examine the relationship between the implant geometry and the surrounding bone.",
-  },
-  orbital: {
-    code: "EM—002 / RECONSTRUCTION",
-    title: "Orbital floor & cheek",
-    summary:
-      "Three implant components presented with the upper skull and mandible. Explore the geometry in its anatomical context, or isolate the implant components for a closer look.",
-  },
-  subperiosteal: {
-    code: "EM—003 / IMPLANT DESIGN",
-    title: "Subperiosteal framework",
-    summary:
-      "A patient-specific framework developed around the underlying anatomy. Explore its structure and use the implant-only view to examine the design independently.",
-  },
-  cranial: {
-    code: "EM—004 / RECONSTRUCTION",
-    title: "Cranial reconstruction",
-    summary:
-      "Cranial implant geometry presented with the supplied anatomical models. Rotate and zoom to inspect its shape, or switch to wireframe to explore the surface structure.",
-  },
-};
+import { initializeExperience } from "./experience.js";
+
 const menu = document.querySelector(".menu-button");
 const navigation = document.querySelector("#navigation");
 function closeMenu() {
@@ -47,97 +23,6 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeMenu();
 });
 document.querySelector("#year").textContent = new Date().getFullYear();
-const dialog = document.querySelector("#project-dialog");
-const container = document.querySelector("#project-viewer");
-const status = document.querySelector("#viewer-status");
-const controls = [...document.querySelectorAll("[data-view]")];
-let viewer, pending, trigger;
-async function openProject(key, source) {
-  const project = projects[key];
-  if (!project) return;
-  trigger = source;
-  pending?.abort();
-  viewer?.dispose();
-  viewer = null;
-  const controller = new AbortController();
-  pending = controller;
-  document.querySelector("#project-title").textContent = project.title;
-  document.querySelector("#project-code").textContent = project.code;
-  document.querySelector("#project-summary").textContent = project.summary;
-  controls.forEach((button) => {
-    const active = button.dataset.view === "solid";
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", String(active));
-    button.disabled = true;
-  });
-  status.hidden = false;
-  status.textContent = "Loading project geometry…";
-  if (!dialog.open) dialog.showModal();
-  document.body.classList.add("modal-open");
-  try {
-    const { createProjectViewer } = await import("./viewer.js");
-    controller.signal.throwIfAborted();
-    const next = await createProjectViewer(container, key, {
-      signal: controller.signal,
-    });
-    if (controller.signal.aborted) {
-      next.dispose();
-      return;
-    }
-    viewer = next;
-    status.hidden = true;
-    controls.forEach((button) => (button.disabled = false));
-  } catch (error) {
-    if (controller.signal.aborted) return;
-    status.textContent =
-      "The 3D view could not load. Check your connection and WebGL support, then close and reopen this project.";
-    console.warn("Project viewer unavailable:", error);
-  }
-}
-document
-  .querySelectorAll("[data-project]")
-  .forEach((button) =>
-    button.addEventListener("click", () =>
-      openProject(button.dataset.project, button),
-    ),
-  );
-document
-  .querySelector("#close-dialog")
-  .addEventListener("click", () => dialog.close());
-dialog.addEventListener("click", (event) => {
-  if (event.target === dialog) {
-    const r = dialog.getBoundingClientRect();
-    if (
-      event.clientX < r.left ||
-      event.clientX > r.right ||
-      event.clientY < r.top ||
-      event.clientY > r.bottom
-    )
-      dialog.close();
-  }
-});
-dialog.addEventListener("close", () => {
-  pending?.abort();
-  viewer?.dispose();
-  viewer = null;
-  document.body.classList.remove("modal-open");
-  trigger?.focus();
-});
-controls.forEach((button) =>
-  button.addEventListener("click", () => {
-    if (!viewer) return;
-    viewer.setView(button.dataset.view);
-    controls.forEach((item) => {
-      const active = item === button;
-      item.classList.toggle("active", active);
-      item.setAttribute("aria-pressed", String(active));
-    });
-  }),
-);
-document
-  .querySelector("#reset-view")
-  .addEventListener("click", () => viewer?.reset());
-
 // A parametric surface study: an abstract design object, not patient anatomy.
 const surface = document.querySelector("#surface-lines");
 for (let row = 0; row < 48; row++) {
@@ -153,198 +38,32 @@ for (let row = 0; row < 48; row++) {
   path.setAttribute("opacity", String(0.3 + 0.7 * Math.sin(t * Math.PI)));
   surface.appendChild(path);
 }
+
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-const motionButton = document.querySelector("#motion-toggle");
-let motionPaused = reducedMotion.matches;
-function applyMotionPreference() {
-  document.body.classList.toggle("motion-paused", motionPaused);
-  motionButton.setAttribute("aria-pressed", String(motionPaused));
-  motionButton.textContent = motionPaused ? "Resume motion" : "Pause motion";
+function applyMotion() {
+  document.body.classList.toggle("motion-paused", reducedMotion.matches);
 }
-applyMotionPreference();
-motionButton.addEventListener("click", () => {
-  motionPaused = !motionPaused;
-  applyMotionPreference();
-});
-reducedMotion.addEventListener("change", (event) => {
-  motionPaused = event.matches;
-  applyMotionPreference();
-});
+applyMotion();
+reducedMotion.addEventListener("change", applyMotion);
 const motionArt = document.querySelector(".motion-art");
 motionArt.addEventListener("pointermove", (event) => {
-  if (motionPaused || reducedMotion.matches || event.pointerType === "touch")
-    return;
-  const bounds = motionArt.getBoundingClientRect();
+  if (reducedMotion.matches || event.pointerType === "touch") return;
+  const b = motionArt.getBoundingClientRect();
   motionArt.style.setProperty(
     "--art-x",
-    `${((event.clientX - bounds.left) / bounds.width - 0.5) * 14}deg`,
+    ((event.clientX - b.left) / b.width - 0.5) * 14 + "deg",
   );
   motionArt.style.setProperty(
     "--art-y",
-    `${((event.clientY - bounds.top) / bounds.height - 0.5) * -10}deg`,
+    ((event.clientY - b.top) / b.height - 0.5) * -10 + "deg",
   );
 });
 motionArt.addEventListener("pointerleave", () => {
   motionArt.style.setProperty("--art-x", "0deg");
   motionArt.style.setProperty("--art-y", "0deg");
 });
-if ("IntersectionObserver" in window) {
-  document.body.classList.add("js-motion");
-  const revealObserver = new IntersectionObserver(
-    (entries) =>
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          revealObserver.unobserve(entry.target);
-        }
-      }),
-    { threshold: 0.08 },
-  );
-  document
-    .querySelectorAll(".reveal")
-    .forEach((element) => revealObserver.observe(element));
-}
-const stages = [
-  [
-    "Understand the individual.",
-    "Start with the anatomical context. Review imaging and the clinical objective to identify the relationships that will shape the design.",
-    "UNDERSTAND THE ANATOMY",
-  ],
-  [
-    "Make the plan visible.",
-    "Explore surgical movements and anatomical relationships in ProPlan. Bring the intended treatment pathway into a digital planning environment.",
-    "EXPLORE THE RELATIONSHIPS",
-  ],
-  [
-    "Give precision a form.",
-    "Develop patient-specific geometry in FreeForm. Refine the implant, framework or guide in relation to the anatomy and the surgical objective.",
-    "REFINE THE GEOMETRY",
-  ],
-  [
-    "Connect design and making.",
-    "Consider manufacturability and prepare the design for its production workflow, informed by experience with DLP, filament and PEEK printing.",
-    "PREPARE FOR PRODUCTION",
-  ],
-];
-document.querySelectorAll("button[data-stage]").forEach((button) =>
-  button.addEventListener("click", () => {
-    const index = Number(button.dataset.stage);
-    document.querySelectorAll("button[data-stage]").forEach((other) => {
-      const active = other === button;
-      other.classList.toggle("active", active);
-      other.setAttribute("aria-pressed", String(active));
-    });
-    document.querySelector("#stage-title").textContent = stages[index][0];
-    document.querySelector("#stage-copy").textContent = stages[index][1];
-    document.querySelector("#diagram-label").textContent =
-      `0${index + 1} / ${stages[index][2]}`;
-    document.querySelector(".journey-diagram").dataset.stage = String(index);
-  }),
-);
+initializeExperience(reducedMotion);
 
-// Lightweight, on-demand implant previews. Anatomy stays inside the dialog.
-const inlinePreviews = [];
-for (const panel of document.querySelectorAll(".case-visual, .detail-art")) {
-  const image = panel.querySelector("img");
-  const key = image
-    .getAttribute("src")
-    .split("/")
-    .pop()
-    .replace("-detail.webp", "");
-  const host = document.createElement("div");
-  host.className = "inline-model";
-  host.setAttribute("aria-label", `${projects[key].title} interactive preview`);
-  panel.appendChild(host);
-  const tools = document.createElement("div");
-  tools.className = "inline-tools";
-  const hint = document.createElement("span");
-  hint.textContent = "3D PREVIEW / LOADING";
-  hint.setAttribute("role", "status");
-  const reset = document.createElement("button");
-  reset.type = "button";
-  reset.textContent = "Reset";
-  reset.setAttribute("aria-label", `Reset ${projects[key].title} preview`);
-  reset.hidden = true;
-  tools.append(hint, reset);
-  panel.appendChild(tools);
-  const state = {
-    panel,
-    host,
-    key,
-    hint,
-    reset,
-    viewer: null,
-    pending: null,
-    visible: false,
-  };
-  inlinePreviews.push(state);
-  reset.addEventListener("click", () => state.viewer?.reset());
-}
-async function activatePreview(state) {
-  if (state.viewer || state.pending) return;
-  const controller = new AbortController();
-  state.pending = controller;
-  state.hint.textContent = "LOADING INTERACTIVE PREVIEW";
-  try {
-    const { createProjectViewer } = await import("./viewer.js");
-    controller.signal.throwIfAborted();
-    const model = await createProjectViewer(state.host, state.key, {
-      signal: controller.signal,
-      implantOnly: true,
-      preview: true,
-    });
-    if (controller.signal.aborted) {
-      model.dispose();
-      return;
-    }
-    state.viewer = model;
-    state.panel.classList.add("preview-ready");
-    state.reset.hidden = false;
-    state.hint.textContent = "DRAG TO ROTATE · ARROW KEYS TO EXPLORE";
-  } catch (error) {
-    if (!controller.signal.aborted)
-      state.hint.textContent = "IMAGE PREVIEW · OPEN PROJECT FOR DETAILS";
-  } finally {
-    if (state.pending === controller) state.pending = null;
-  }
-}
-function deactivatePreview(state) {
-  state.pending?.abort();
-  state.pending = null;
-  state.viewer?.dispose();
-  state.viewer = null;
-  state.panel.classList.remove("preview-ready");
-  state.reset.hidden = true;
-}
-if ("IntersectionObserver" in window) {
-  const previewObserver = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        const state = inlinePreviews.find(
-          (item) => item.panel === entry.target,
-        );
-        state.visible = entry.isIntersecting;
-        if (state.visible && !document.hidden) activatePreview(state);
-        else deactivatePreview(state);
-      }
-    },
-    { rootMargin: "150px 0px", threshold: 0 },
-  );
-  inlinePreviews.forEach((state) => previewObserver.observe(state.panel));
-  document.addEventListener("visibilitychange", () =>
-    inlinePreviews.forEach((state) => {
-      if (document.hidden) deactivatePreview(state);
-      else if (state.visible) activatePreview(state);
-    }),
-  );
-} else {
-  inlinePreviews.forEach((state) => {
-    state.hint.textContent = "SELECT TO ACTIVATE 3D";
-    state.panel.addEventListener("pointerenter", () => activatePreview(state), {
-      once: true,
-    });
-  });
-}
 let scrollFrame = 0;
 function updateProgress() {
   scrollFrame = 0;
@@ -362,65 +81,280 @@ addEventListener(
 addEventListener("resize", updateProgress);
 updateProgress();
 
-// Update only on pointer events; no permanent animation loop or cursor capture.
-const pointerHalo = document.createElement("div");
-pointerHalo.className = "pointer-halo";
-pointerHalo.setAttribute("aria-hidden", "true");
-document.body.appendChild(pointerHalo);
-const hoverPointer = matchMedia("(hover: hover) and (pointer: fine)");
-let pointerFrame = 0,
-  pointerPosition,
-  spotlightPanel;
-for (const panel of document.querySelectorAll(
-  ".case-visual, .detail-art, .about-mark",
-)) {
-  const spotlight = document.createElement("div");
-  spotlight.className = "panel-spotlight";
-  spotlight.setAttribute("aria-hidden", "true");
-  panel.appendChild(spotlight);
+// Full anatomy loads only near the viewport. Offscreen viewers retain their controls and camera state.
+const studies = [...document.querySelectorAll("[data-case]")].map(
+  (article) => ({
+    article,
+    key: article.dataset.case,
+    host: article.querySelector(".model-host"),
+    stage: article.querySelector(".model-stage"),
+    loading: article.querySelector(".model-loading"),
+    label: article.querySelector(".loading-label"),
+    hint: article.querySelector(".model-loading small"),
+    retry: article.querySelector("[data-action=retry]"),
+    slider: article.querySelector(".separation-slider"),
+    viewer: null,
+    pending: null,
+    near: false,
+    state: { separation: 0, view: "solid", mode: "rotate" },
+    angle: null,
+  }),
+);
+let viewerModule;
+const getViewerModule = () =>
+  (viewerModule ||= import("./viewer.js").catch((error) => {
+    viewerModule = null;
+    throw error;
+  }));
+function updateSlider(study, value) {
+  const n = Number(value);
+  study.state.separation = n / 100;
+  study.slider.value = n;
+  study.slider.style.setProperty("--fill", n + "%");
+  study.slider.setAttribute(
+    "aria-valuetext",
+    n + " percent — " + (n === 0 ? "fitted to anatomy" : "implant separated"),
+  );
+  study.article.querySelector(".separation-value").innerHTML =
+    n + "<span>%</span>";
+  study.viewer?.setSeparation(n / 100);
 }
-function hidePointerGlow() {
-  pointerHalo.classList.remove("is-visible");
-  if (pointerFrame) cancelAnimationFrame(pointerFrame);
-  pointerFrame = 0;
-  pointerPosition = null;
-  spotlightPanel = null;
-}
-document.addEventListener(
-  "pointermove",
-  (event) => {
-    if (
-      !hoverPointer.matches ||
-      reducedMotion.matches ||
-      motionPaused ||
-      event.pointerType === "touch"
-    )
-      return;
-    pointerPosition = { x: event.clientX, y: event.clientY };
-    spotlightPanel = event.target.closest(
-      ".case-visual, .detail-art, .about-mark",
+function pressGroup(study, attribute, value) {
+  study.article
+    .querySelectorAll("[" + attribute + "]")
+    .forEach((button) =>
+      button.setAttribute(
+        "aria-pressed",
+        String(button.getAttribute(attribute) === value),
+      ),
     );
-    if (pointerFrame) return;
-    pointerFrame = requestAnimationFrame(() => {
-      pointerFrame = 0;
-      if (!pointerPosition) return;
-      const { x, y } = pointerPosition;
-      pointerHalo.style.transform = `translate3d(${x - 240}px,${y - 240}px,0)`;
-      pointerHalo.classList.add("is-visible");
-      if (spotlightPanel) {
-        const bounds = spotlightPanel.getBoundingClientRect();
-        spotlightPanel.style.setProperty("--spot-x", `${x - bounds.left}px`);
-        spotlightPanel.style.setProperty("--spot-y", `${y - bounds.top}px`);
+}
+async function activate(study) {
+  if (study.viewer || study.pending || document.hidden) return;
+  const controller = new AbortController();
+  study.pending = controller;
+  study.article.classList.remove("dormant", "failed");
+  study.article.classList.add("is-loading");
+  study.label.textContent = "PREPARING ANATOMY";
+  study.hint.textContent = "Loading the complete 3D assembly";
+  study.retry.hidden = true;
+  study.loading.style.setProperty("--load", "0%");
+  const timeout = setTimeout(() => {
+    if (study.pending !== controller || controller.signal.aborted) return;
+    study.label.textContent = "TAKING A LITTLE LONGER";
+    study.hint.textContent =
+      "The page is ready. Your model will appear as soon as it downloads.";
+    study.retry.hidden = false;
+  }, 6000);
+  const started = performance.now();
+  try {
+    const { createProjectViewer } = await getViewerModule();
+    controller.signal.throwIfAborted();
+    const next = await createProjectViewer(study.host, study.key, {
+      signal: controller.signal,
+      state: study.state,
+      onProgress: (p) =>
+        study.loading.style.setProperty("--load", Math.round(p * 100) + "%"),
+    });
+    if (controller.signal.aborted) {
+      next.dispose();
+      return;
+    }
+    study.viewer = next;
+    next.setSeparation(study.state.separation);
+    next.setView(study.state.view);
+    next.setMode(study.state.mode);
+    if (study.angle) {
+      next.setAngle(study.angle);
+      study.angle = null;
+    }
+    study.article.classList.add("ready");
+    study.article.dataset.loadMs = Math.round(performance.now() - started);
+    study.article.dispatchEvent(
+      new CustomEvent("model-ready", {
+        bubbles: true,
+        detail: {
+          key: study.key,
+          milliseconds: Number(study.article.dataset.loadMs),
+        },
+      }),
+    );
+  } catch (error) {
+    if (controller.signal.aborted) return;
+    study.article.classList.add("failed");
+    study.label.textContent = "3D VIEW UNAVAILABLE";
+    study.hint.textContent =
+      "Check your connection and WebGL support, then retry.";
+    study.retry.hidden = false;
+    console.warn("Model unavailable: " + study.key, error.message);
+  } finally {
+    clearTimeout(timeout);
+    if (study.pending === controller) {
+      study.pending = null;
+      study.article.classList.remove("is-loading");
+    }
+  }
+}
+function deactivate(study) {
+  study.pending?.abort();
+  study.pending = null;
+  study.article.classList.remove("is-loading");
+  if (study.viewer) {
+    study.state = { ...study.state, ...study.viewer.getState() };
+    study.viewer.dispose();
+    study.viewer = null;
+  }
+  study.article.classList.remove("ready");
+  study.article.classList.add("dormant");
+}
+for (const study of studies) {
+  const poster = study.article.querySelector(".model-poster");
+  const posterReady = () => {
+    poster.classList.add("loaded");
+    study.stage.classList.add("has-poster");
+  };
+  poster.addEventListener("load", posterReady);
+  if (poster.complete && poster.naturalWidth) posterReady();
+  study.slider.addEventListener("input", () =>
+    updateSlider(study, study.slider.value),
+  );
+  study.host.addEventListener("viewer-context-lost", () => {
+    deactivate(study);
+    study.article.classList.remove("dormant");
+    study.article.classList.add("failed");
+    study.label.textContent = "3D VIEW PAUSED";
+    study.hint.textContent = "Select retry to restore the model.";
+    study.retry.hidden = false;
+  });
+  study.article.addEventListener("click", async (event) => {
+    const button = event.target.closest("button");
+    if (!button) return;
+    if (button.dataset.mode) {
+      study.state.mode = button.dataset.mode;
+      study.viewer?.setMode(study.state.mode);
+      pressGroup(study, "data-mode", study.state.mode);
+    }
+    if (button.dataset.view) {
+      study.state.view = button.dataset.view;
+      study.viewer?.setView(study.state.view);
+      pressGroup(study, "data-view", study.state.view);
+    }
+    if (button.dataset.angle) {
+      if (study.viewer) study.viewer.setAngle(button.dataset.angle);
+      else study.angle = button.dataset.angle;
+      pressGroup(study, "data-angle", button.dataset.angle);
+    }
+    switch (button.dataset.action) {
+      case "reset":
+        study.viewer?.reset();
+        study.state = { separation: 0, view: "solid", mode: "rotate" };
+        study.angle = null;
+        updateSlider(study, 0);
+        study.viewer?.setView("solid");
+        study.viewer?.setMode("rotate");
+        pressGroup(study, "data-view", "solid");
+        pressGroup(study, "data-mode", "rotate");
+        pressGroup(study, "data-angle", "");
+        break;
+      case "zoom-in":
+        study.viewer?.zoom(-0.65);
+        break;
+      case "zoom-out":
+        study.viewer?.zoom(0.65);
+        break;
+      case "retry":
+        deactivate(study);
+        activate(study);
+        break;
+      case "touch": {
+        const active = button.getAttribute("aria-pressed") !== "true";
+        button.setAttribute("aria-pressed", String(active));
+        button.textContent = active
+          ? "Exit touch controls"
+          : "Enable touch controls";
+        study.stage.classList.toggle("touch-enabled", active);
+        break;
       }
+      case "fullscreen":
+        try {
+          if (document.fullscreenElement) await document.exitFullscreen();
+          else if (study.article.requestFullscreen)
+            await study.article.requestFullscreen();
+          else toggleExpanded(study);
+        } catch {
+          toggleExpanded(study);
+        }
+        break;
+    }
+  });
+}
+document.addEventListener("fullscreenchange", () => {
+  studies.forEach((study) => {
+    const active = document.fullscreenElement === study.article;
+    const button = study.article.querySelector("[data-action=fullscreen]");
+    button.innerHTML =
+      (active ? "Collapse" : "Expand") +
+      ' <span aria-hidden="true">' +
+      (active ? "↙" : "↗") +
+      "</span>";
+    button.setAttribute(
+      "aria-label",
+      (active ? "Collapse " : "Expand ") + study.key + " model",
+    );
+  });
+});
+const nearObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      const study = studies.find((s) => s.article === entry.target);
+      study.near = entry.isIntersecting;
+      if (study.near) activate(study);
+      else deactivate(study);
     });
   },
-  { passive: true },
+  { rootMargin: "300px 0px", threshold: 0 },
 );
-document.documentElement.addEventListener("pointerleave", hidePointerGlow);
-window.addEventListener("blur", hidePointerGlow);
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) hidePointerGlow();
+studies.forEach((s) => nearObserver.observe(s.article));
+document.addEventListener("visibilitychange", () =>
+  studies.forEach((s) => {
+    if (document.hidden) deactivate(s);
+    else if (s.near) activate(s);
+  }),
+);
+const indexLinks = [...document.querySelectorAll(".case-index a")];
+const indexObserver = new IntersectionObserver(
+  (entries) => {
+    for (const entry of entries)
+      if (entry.isIntersecting) {
+        indexLinks.forEach((a) => {
+          const active = a.hash === "#" + entry.target.id;
+          a.classList.toggle("active", active);
+          if (active) {
+            a.setAttribute("aria-current", "location");
+            const nav = a.parentElement;
+            if (nav.scrollWidth > nav.clientWidth)
+              nav.scrollTo({
+                left: a.offsetLeft - (nav.clientWidth - a.clientWidth) / 2,
+                behavior: reducedMotion.matches ? "instant" : "smooth",
+              });
+          } else a.removeAttribute("aria-current");
+        });
+      }
+  },
+  { rootMargin: "-15% 0px -55% 0px", threshold: 0 },
+);
+studies.forEach((s) => indexObserver.observe(s.article));
+
+function toggleExpanded(study) {
+  const open = study.article.classList.toggle("expanded");
+  document.body.classList.toggle("model-expanded", open);
+  const button = study.article.querySelector("[data-action=fullscreen]");
+  button.textContent = open ? "Collapse ↙" : "Expand ↗";
+  button.setAttribute("aria-expanded", String(open));
+}
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape")
+    studies
+      .filter((s) => s.article.classList.contains("expanded"))
+      .forEach(toggleExpanded);
 });
-motionButton.addEventListener("click", hidePointerGlow);
-reducedMotion.addEventListener("change", hidePointerGlow);
-hoverPointer.addEventListener("change", hidePointerGlow);

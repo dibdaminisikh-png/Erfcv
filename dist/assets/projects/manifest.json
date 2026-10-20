@@ -1,100 +1,152 @@
 {
   "mandibular": [
     {
-      "file": "assets/projects/mandibular-0.stl",
-      "kind": "implant",
-      "preview": "assets/projects/mandibular-0-preview.stl"
+      "file": "assets/projects/mandibular-0.mesh",
+      "kind": "implant"
     },
     {
-      "file": "assets/projects/mandibular-1.stl",
+      "file": "assets/projects/mandibular-1.mesh",
       "kind": "anatomy"
     },
     {
-      "file": "assets/projects/mandibular-2.stl",
+      "file": "assets/projects/mandibular-2.mesh",
       "kind": "anatomy"
     },
     {
-      "file": "assets/projects/mandibular-3.stl",
-      "kind": "implant",
-      "preview": "assets/projects/mandibular-3-preview.stl"
+      "file": "assets/projects/mandibular-3.mesh",
+      "kind": "implant"
     }
   ],
   "orbital": [
     {
-      "file": "assets/projects/orbital-0.stl",
-      "kind": "implant",
-      "preview": "assets/projects/orbital-0-preview.stl"
+      "file": "assets/projects/orbital-0.mesh",
+      "kind": "implant"
     },
     {
-      "file": "assets/projects/orbital-1.stl",
-      "kind": "implant",
-      "preview": "assets/projects/orbital-1-preview.stl"
+      "file": "assets/projects/orbital-1.mesh",
+      "kind": "implant"
     },
     {
-      "file": "assets/projects/orbital-2.stl",
-      "kind": "implant",
-      "preview": "assets/projects/orbital-2-preview.stl"
+      "file": "assets/projects/orbital-2.mesh",
+      "kind": "implant"
     },
     {
-      "file": "assets/projects/orbital-3.stl",
+      "file": "assets/projects/orbital-3.mesh",
       "kind": "anatomy"
     },
     {
-      "file": "assets/projects/orbital-4.stl",
+      "file": "assets/projects/orbital-4.mesh",
       "kind": "anatomy"
     }
   ],
   "cranial": [
     {
-      "file": "assets/projects/cranial-0.stl",
-      "kind": "implant",
-      "preview": "assets/projects/cranial-0-preview.stl"
+      "file": "assets/projects/cranial-0.mesh",
+      "kind": "implant"
     },
     {
-      "file": "assets/projects/cranial-1.stl",
+      "file": "assets/projects/cranial-1.mesh",
       "kind": "anatomy"
     },
     {
-      "file": "assets/projects/cranial-2.stl",
+      "file": "assets/projects/cranial-2.mesh",
       "kind": "anatomy"
     }
   ],
   "subperiosteal": [
     {
-      "file": "assets/projects/subperiosteal-2.stl",
-      "kind": "implant",
-      "preview": "assets/projects/subperiosteal-2-preview.stl"
+      "file": "assets/projects/subperiosteal-0.mesh",
+      "kind": "implant"
     },
     {
-      "file": "assets/projects/subperiosteal-3.stl",
-      "kind": "implant",
-      "preview": "assets/projects/subperiosteal-3-preview.stl"
+      "file": "assets/projects/subperiosteal-1.mesh",
+      "kind": "implant"
     },
     {
-      "file": "assets/projects/subperiosteal-4.stl",
-      "kind": "implant",
-      "preview": "assets/projects/subperiosteal-4-preview.stl"
+      "file": "assets/projects/subperiosteal-2.mesh",
+      "kind": "implant"
     },
     {
-      "file": "assets/projects/subperiosteal-5.stl",
-      "kind": "implant",
-      "preview": "assets/projects/subperiosteal-5-preview.stl"
+      "file": "assets/projects/subperiosteal-3.mesh",
+      "kind": "implant"
     },
     {
-      "file": "assets/projects/subperiosteal-6.stl",
+      "file": "assets/projects/subperiosteal-4.mesh",
       "kind": "anatomy"
     },
     {
-      "file": "assets/projects/subperiosteal-7.stl",
+      "file": "assets/projects/subperiosteal-5.mesh",
       "kind": "anatomy"
     },
     {
-      "file": "assets/projects/subperiosteal-8.stl",
+      "file": "assets/projects/subperiosteal-6.mesh",
       "kind": "anatomy"
     },
     {
-      "file": "assets/projects/subperiosteal-9.stl",
+      "file": "assets/projects/subperiosteal-7.mesh",
       "kind": "anatomy"
+    }
+  ],
+  "tmj": [
+    {
+      "file": "assets/projects/tmj-0.mesh",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/tmj-1.mesh",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/tmj-2.mesh",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/tmj-3.mesh",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/tmj-4.mesh",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/tmj-5.mesh",
+      "kind": "anatomy"
+    }
+  ],
+  "mandibular-reconstruction": [
+    {
+      "file": "assets/projects/mandibular-reconstruction-0.mesh",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/mandibular-reconstruction-1.mesh",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/mandibular-reconstruction-2.mesh",
+      "kind": "anatomy"
+    }
+  ],
+  "fibula": [
+    {
+      "file": "assets/projects/fibula-0.mesh",
+      "kind": "implant"
+    },
+    {
+      "file": "assets/projects/fibula-1.mesh",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/fibula-2.mesh",
+      "kind": "anatomy"
+    },
+    {
+      "file": "assets/projects/fibula-3.mesh",
+      "kind": "graft"
+    },
+    {
+      "file": "assets/projects/fibula-4.mesh",
+      "kind": "graft"
     }
   ]
 }
