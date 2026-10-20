@@ -1159,3 +1159,99 @@ html {
     letter-spacing: 1px;
   }
 }
+
+/* Navigation, anatomy and playback form one accessible viewing console. */
+.journey-layout {
+  grid-template-areas: "diagram navigation" "diagram description" "diagram actions" "diagram footnote";
+  grid-template-rows: auto 1fr auto auto;
+  row-gap: 0;
+  align-items: start;
+}
+.journey-navigation { grid-area: navigation; min-width: 0; }
+.journey-layout > .journey-diagram { grid-area: diagram; min-height: 100%; }
+.journey-layout > .stage-description { grid-area: description; }
+.journey-layout > .sequence-actions { grid-area: actions; }
+.journey-layout > .journey-footnote { grid-area: footnote; }
+
+@media (max-width: 800px) {
+  .design-equation {
+    position: relative;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 0 13px;
+    padding-top: 18px;
+  }
+  .design-equation:before {
+    content: "";
+    position: absolute;
+    left: 13px;
+    top: 50px;
+    bottom: 37px;
+    width: 1px;
+    background: linear-gradient(#71906b15, #91af814d, #a9c98f40);
+  }
+  .concept-node { grid-column: 2; gap: 15px; padding: 13px 0; }
+  .concept-anatomy { grid-row: 1; }
+  .concept-craft { grid-row: 2; }
+  .concept-insight { grid-row: 3; }
+  .concept-fit { grid-row: 4; padding: 16px; margin-top: 5px; }
+  .practice-strip .concept-operator {
+    display: grid;
+    place-items: center;
+    grid-column: 1;
+    position: relative;
+    z-index: 1;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid #708d665c;
+    border-radius: 5px;
+    background: #172e24;
+    color: #bad1a5;
+    font: 19px/1 Georgia, serif;
+  }
+  .concept-operator:nth-child(2) { grid-row: 2; }
+  .concept-operator:nth-child(4) { grid-row: 3; }
+  .concept-operator:nth-child(6) { grid-row: 4; }
+  .concept-icon { width: 35px; height: 40px; }
+  .concept-kicker { font-size: 6.5px; letter-spacing: .65px; margin-bottom: 4px; }
+  .practice-strip .concept-title, .practice-strip .concept-fit .concept-title {
+    font-size: 12px; letter-spacing: .8px;
+  }
+  .concept-node small { font-size: 9px; margin-top: 3px; }
+
+  .journey-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "navigation" "diagram" "actions" "description" "footnote";
+    grid-template-rows: auto auto auto auto auto;
+    gap: 0;
+  }
+  .journey-navigation {
+    padding: 5px 8px 0;
+    border: 1px solid #526e4d70;
+    border-bottom: 0;
+    border-radius: 12px 12px 0 0;
+    background: #11271e;
+  }
+  .journey-layout > .journey-diagram {
+    height: clamp(290px, 43svh, 380px);
+    min-height: 0;
+    border-radius: 0;
+  }
+  .journey-layout > .sequence-actions {
+    margin: 0;
+    padding: 11px 16px;
+    border: 1px solid #526e4d70;
+    border-top: 0;
+    border-radius: 0 0 12px 12px;
+    background: #11271e;
+  }
+  .journey-layout > .stage-description { min-height: 0; padding-top: 28px; }
+  .sequence-play, .sequence-next { min-height: 40px; }
+  .journey-navigation .step-buttons button { text-align: center; min-height: 60px; }
+}
+@media (max-width: 480px) {
+  .concept-node { gap: 12px; }
+  .concept-fit { padding: 14px 12px; }
+  .practice-strip .concept-title, .practice-strip .concept-fit .concept-title { font-size: 11px; }
+  .journey-navigation .step-buttons button { padding-inline: 3px; font-size: 10px; }
+}

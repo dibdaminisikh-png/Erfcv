@@ -1,5 +1,5 @@
-import * as THREE from "./assets/three.module.min.js?v=c98ea042cbb3";
-import { loadProjectGeometry } from "./viewer.js?v=c98ea042cbb3";
+import * as THREE from "./assets/three.module.min.js?v=b79b551e19c7";
+import { loadProjectGeometry } from "./viewer.js?v=b79b551e19c7";
 
 // An illustrative reconstruction sequence built on the portfolio's mandibular anatomy.
 export async function createSurgicalJourney(

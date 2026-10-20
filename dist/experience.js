@@ -13,7 +13,7 @@ function initializeReveals(reducedMotion) {
     .forEach((el) => (el.dataset.reveal = "case"));
   document
     .querySelectorAll(
-      ".portfolio-intro,.journey .section-heading,.journey-controls,.studio-about > div:last-child,.contact-copy",
+      ".portfolio-intro,.journey .section-heading,.journey-navigation,.stage-description,.studio-about > div:last-child,.contact-copy",
     )
     .forEach((el) => (el.dataset.reveal = "editorial"));
   document
@@ -107,7 +107,7 @@ function initializeSmoothScroll(reducedMotion, finePointer) {
     }
     if (lenis) return;
     try {
-      const { default: Lenis } = await import("./assets/lenis.js?v=c98ea042cbb3");
+      const { default: Lenis } = await import("./assets/lenis.js?v=b79b551e19c7");
       if (revision !== pending || reducedMotion.matches || !finePointer.matches)
         return;
       lenis = new Lenis({
@@ -350,7 +350,7 @@ function initializeSurgicalStory(reducedMotion) {
     diagram.classList.add("journey-loading");
     diagram.classList.remove("journey-unavailable");
     retry.hidden = true;
-    loading = import("./surgical-journey.js?v=c98ea042cbb3")
+    loading = import("./surgical-journey.js?v=b79b551e19c7")
       .then(async ({ createSurgicalJourney }) => {
         viewer = await createSurgicalJourney(
           section.querySelector(".journey-canvas"),

@@ -1019,3 +1019,84 @@ body.model-expanded {
 .case-study.failed:not(.dormant) .model-loading {
   display: flex;
 }
+
+/* Keep the anatomical controls beside the model and ahead of the case notes. */
+.case-panel { gap: 26px; }
+.case-details { min-width: 0; }
+.explorer-controls { margin-top: 0; }
+
+/* A conversation between clinical insight and digital form. */
+.contact-connection {
+  transform: none;
+  border-color: #6e927649;
+  border-radius: 12px;
+  background: radial-gradient(ellipse at 52% 48%, #38583a30, transparent 72%), #10241c;
+}
+.connection-heading, .connection-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 22px 24px;
+  color: #91ac91;
+  font: 8px/1.5 monospace;
+  letter-spacing: .8px;
+}
+.connection-heading { border-bottom: 1px solid #90b28b1a; }
+.connection-heading > span:first-child { color: #d4e1c8; letter-spacing: 1.8px; }
+.connection-heading > span:last-child { display: flex; align-items: center; gap: 7px; font-size: 6px; }
+.connection-heading i { width: 4px; height: 4px; background: #bdd8aa; box-shadow: 0 0 10px #bdddac45; }
+.dialogue-art { display: block; width: 100%; height: auto; }
+.dialogue-art .dialogue-kicker { fill: #bdd0b4; font: 10px monospace; letter-spacing: .8px; }
+.dialogue-art .dialogue-caption { fill: #92ad89; font: 9px monospace; letter-spacing: 1.2px; }
+.connection-footer { padding-block: 19px; border-top: 1px solid #90b28b1a; font-size: 7px; }
+.connection-footer b { padding-inline: 8px; font-weight: 400; color: #c1d6b4; }
+.contact-connection.in-view .dialogue-signal { animation: dialogue-connect 8s linear infinite; }
+@keyframes dialogue-connect { to { stroke-dashoffset: -434; } }
+
+@media (hover: none), (pointer: coarse) {
+  .stage-topline [data-action="fullscreen"] { display: none; }
+}
+
+@media (max-width: 800px) {
+  .case-panel { padding: 0; gap: 0; border-top: 0; }
+  .case-details { padding: 27px; }
+  .model-stage { min-height: 0; height: clamp(290px, 43svh, 360px); }
+  .stage-topline [data-action="fullscreen"] { display: none; }
+  .model-host, .model-poster { inset: 44px 0 56px; }
+  .model-poster { height: calc(100% - 100px); }
+  .model-bottomline { bottom: 13px; }
+  .explorer-controls {
+    padding: 12px 19px 13px;
+    border-inline: 0;
+    border-radius: 0;
+    border-color: #3b594760;
+  }
+  .control-heading { padding-bottom: 4px; }
+  .control-heading button { min-height: 32px; }
+  .separation-head { margin-bottom: 0; }
+  .separation-slider {
+    height: 28px;
+    margin-block: 3px;
+    background-size: 100% 4px;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .separation-slider::-webkit-slider-thumb { width: 22px; height: 22px; }
+  .separation-slider::-moz-range-thumb { width: 14px; height: 14px; }
+  .range-captions { margin-bottom: 8px; }
+  .control-row { padding: 3px 0; }
+  .segmented button { min-height: 34px; }
+  .contact-connection { width: 100%; max-width: 560px; }
+}
+@media (max-width: 480px) {
+  .case-panel { padding: 0; }
+  .case-details { padding: 24px 20px; }
+  .explorer-controls { padding: 11px 16px 12px; }
+  .connection-heading, .connection-footer { padding-inline: 16px; font-size: 7px; letter-spacing: .5px; }
+  .connection-heading { padding-block: 18px; }
+  .connection-heading > span:last-child { font-size: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-connection .dialogue-signal { animation: none; }
+}

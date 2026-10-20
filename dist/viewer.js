@@ -1,4 +1,4 @@
-import * as THREE from "./assets/three.module.min.js?v=c98ea042cbb3";
+import * as THREE from "./assets/three.module.min.js?v=b79b551e19c7";
 
 let manifestPromise;
 const buffers = new Map();

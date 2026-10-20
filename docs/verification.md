@@ -52,3 +52,13 @@ All seven models total 10,777,726 bytes of binary geometry. Largest single assem
 - Forcing the optional Performance timing API to throw did not interrupt model initialization.
 - Injected failures after model canvas attachment and during surgical initialization left zero orphan canvases. Retry recovered both views. Simulated WebGL context loss also recovered through Retry in both sections.
 - Final local Chrome and Edge checks passed for all seven assemblies, separation/reset controls and all four process stages, with no JavaScript errors or failed asset responses. The approved layout, model geometry and surgical sequence were preserved.
+
+## 2.0.2 Responsive viewing controls
+
+- Inspected mobile and desktop screenshots of the equation, case cards, surgical process and replacement contact illustration.
+- Chrome touch emulation at 320×568, 375×667, 390×844 and 768×1024 showed no horizontal overflow. Stage selection, the anatomy animation and playback actions fit together in each viewport when the viewing console was aligned below the sticky index.
+- All seven mobile assemblies had exactly one canvas. Moving separation to 100% changed the rendered pixels; Reset restored the original canvas pixels exactly. Each control panel directly followed the model, ahead of its explanatory notes.
+- Verified touch-control activation, all four distinct rendered surgical stages, automatic playback advancing to Guide, and Next stage advancing to Resect while stopping automatic playback.
+- The equation displayed both plus signs and the equals sign on mobile. Expand was hidden on portrait and landscape touch screens, while native desktop fullscreen remained functional.
+- Reduced-motion disabled the contact illustration's animated connection. The vector artwork adds no image or WebGL download.
+- Desktop Edge passed all seven model controls and four surgical stages without application errors or failed asset requests.

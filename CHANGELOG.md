@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.2 — 2026-10-20
+
+- Keep implant separation and viewer controls immediately after the anatomy, with case notes below the controls on mobile and desktop.
+- Present the mobile design equation as a connected vertical composition with visible plus and equals signs.
+- Place surgical stage selection above the mobile animation and playback/next-stage actions directly below it, ahead of the explanatory copy.
+- Hide Expand on mobile while retaining the desktop fullscreen view.
+- Replace the contact study with an original vector illustration connecting clinical insight and design expertise through conversation.
+
 ## 2.0.1 — 2026-10-20
 
 - Fingerprint the complete browser module graph, styles and geometry requests so cached files from an earlier release cannot break the current viewers.
