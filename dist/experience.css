@@ -443,6 +443,26 @@ html.lenis.lenis-smooth {
 .journey-canvas {
   position: absolute;
   inset: 0;
+  visibility: hidden;
+}
+.journey-ready .journey-canvas {
+  visibility: visible;
+}
+.journey-retry {
+  position: absolute;
+  z-index: 8;
+  bottom: 105px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 18px;
+  border: 1px solid #acd1ad50;
+  border-radius: 4px;
+  background: #17392e;
+  color: #daead8;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
 }
 .journey-canvas canvas {
   display: block;
@@ -456,7 +476,7 @@ html.lenis.lenis-smooth {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  transition: opacity 0.4s;
+  transition: none;
 }
 .journey-ready .journey-poster {
   opacity: 0;

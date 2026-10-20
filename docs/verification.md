@@ -43,3 +43,12 @@ All seven models total 10,777,726 bytes of binary geometry. Largest single assem
 - Verified that reduced-motion disables wheel smoothing, the pointer light and entrance effects.
 - Verified native touch scrolling and no pointer light on touch devices; mobile viewport had no horizontal document overflow.
 - The anatomical process adds one 12 KB WebP fallback; it reuses the existing 225 KB mandibular geometry and shared Three.js module.
+
+## 2.0.1 Chrome cache regression
+
+- Reproduced the reported overlap by serving the previous release's cached viewer and STL manifest to the current page: the old viewer rendered a canvas, then failed on the missing `setSeparation` method, leaving the poster visible. The surgical module also failed because the cached viewer lacked `loadProjectGeometry`.
+- A release fingerprint now covers the HTML's module and stylesheet references, the full module dependency graph, the manifest and geometry requests. Repeating the build without edits produces the same fingerprint.
+- With stale unversioned viewer/manifest responses deliberately injected, Chrome loaded all seven complete assemblies through the versioned URLs. Every case had exactly one canvas and a hidden poster; all four surgical stages produced distinct rendered frames, without application errors.
+- Forcing the optional Performance timing API to throw did not interrupt model initialization.
+- Injected failures after model canvas attachment and during surgical initialization left zero orphan canvases. Retry recovered both views. Simulated WebGL context loss also recovered through Retry in both sections.
+- Final local Chrome and Edge checks passed for all seven assemblies, separation/reset controls and all four process stages, with no JavaScript errors or failed asset responses. The approved layout, model geometry and surgical sequence were preserved.

@@ -168,6 +168,10 @@
   position: absolute;
   inset: 55px 0 60px;
   z-index: 2;
+  visibility: hidden;
+}
+.case-study.ready .model-host {
+  visibility: visible;
 }
 .model-host canvas {
   width: 100%;
@@ -190,7 +194,9 @@
   height: calc(100% - 115px);
   object-fit: contain;
   opacity: 1;
-  transition: opacity 0.35s;
+  /* Swap atomically; fading the poster over a differently framed canvas
+     briefly creates a second skull even during a successful load. */
+  transition: none;
 }
 .model-poster.loaded {
   opacity: 1;

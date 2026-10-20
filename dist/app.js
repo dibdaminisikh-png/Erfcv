@@ -1,4 +1,4 @@
-import { initializeExperience } from "./experience.js";
+import { initializeExperience } from "./experience.js?v=c98ea042cbb3";
 
 const menu = document.querySelector(".menu-button");
 const navigation = document.querySelector("#navigation");
@@ -102,7 +102,7 @@ const studies = [...document.querySelectorAll("[data-case]")].map(
 );
 let viewerModule;
 const getViewerModule = () =>
-  (viewerModule ||= import("./viewer.js").catch((error) => {
+  (viewerModule ||= import("./viewer.js?v=c98ea042cbb3").catch((error) => {
     viewerModule = null;
     throw error;
   }));
@@ -156,7 +156,7 @@ async function activate(study) {
       onProgress: (p) =>
         study.loading.style.setProperty("--load", Math.round(p * 100) + "%"),
     });
-    if (controller.signal.aborted) {
+    if (controller.signal.aborted || study.pending !== controller) {
       next.dispose();
       return;
     }
@@ -180,7 +180,11 @@ async function activate(study) {
       }),
     );
   } catch (error) {
-    if (controller.signal.aborted) return;
+    if (controller.signal.aborted || study.pending !== controller) return;
+    study.viewer?.dispose();
+    study.viewer = null;
+    study.host.replaceChildren();
+    study.article.classList.remove("ready");
     study.article.classList.add("failed");
     study.label.textContent = "3D VIEW UNAVAILABLE";
     study.hint.textContent =

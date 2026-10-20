@@ -107,7 +107,7 @@ function initializeSmoothScroll(reducedMotion, finePointer) {
     }
     if (lenis) return;
     try {
-      const { default: Lenis } = await import("./assets/lenis.js");
+      const { default: Lenis } = await import("./assets/lenis.js?v=c98ea042cbb3");
       if (revision !== pending || reducedMotion.matches || !finePointer.matches)
         return;
       lenis = new Lenis({
@@ -299,7 +299,7 @@ function initializeSurgicalStory(reducedMotion) {
             ],
     );
     if (!reducedMotion.matches)
-      section.querySelector(".stage-description").animate(
+      section.querySelector(".stage-description").animate?.(
         [
           { opacity: 0.15, transform: "translateY(10px)" },
           { opacity: 1, transform: "translateY(0)" },
@@ -330,22 +330,36 @@ function initializeSurgicalStory(reducedMotion) {
     play.innerHTML = '<span aria-hidden="true">Ⅱ</span> Stop sequence';
     playStage(0);
   });
+  const retry = document.createElement("button");
+  retry.className = "journey-retry";
+  retry.textContent = "Retry 3D sequence ↗";
+  retry.hidden = true;
+  diagram.append(retry);
+  function unavailable(error) {
+    stop();
+    viewer?.dispose();
+    viewer = null;
+    diagram.classList.remove("journey-ready");
+    diagram.classList.add("journey-unavailable");
+    retry.hidden = false;
+    console.warn("Surgical illustration unavailable:", error.message);
+  }
+  retry.addEventListener("click", () => load());
   async function load() {
     if (viewer || loading) return;
     diagram.classList.add("journey-loading");
-    loading = import("./surgical-journey.js")
+    diagram.classList.remove("journey-unavailable");
+    retry.hidden = true;
+    loading = import("./surgical-journey.js?v=c98ea042cbb3")
       .then(async ({ createSurgicalJourney }) => {
         viewer = await createSurgicalJourney(
           section.querySelector(".journey-canvas"),
-          { reducedMotion: reducedMotion.matches },
+          { reducedMotion: reducedMotion.matches, onError: unavailable },
         );
         viewer.setReducedMotion(reducedMotion.matches);
         viewer.setStage(stage);
       })
-      .catch((error) => {
-        diagram.classList.add("journey-unavailable");
-        console.warn("Surgical illustration unavailable:", error.message);
-      })
+      .catch(unavailable)
       .finally(() => {
         diagram.classList.remove("journey-loading");
         loading = null;
