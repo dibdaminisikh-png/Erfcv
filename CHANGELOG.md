@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.4 — 2026-10-20
+
+- Defer and serialize WebGL initialization until scrolling settles, with cancellation for models passed during fast navigation.
+- Reuse up to three recent viewers, pause offscreen transitions and preserve camera/display/separation state across eviction.
+- Split model preparation into input-friendly tasks and keep in-page navigation free of intermediate model construction.
+- Apply the same scheduling to the surgical illustration and remove the case shadow tween while preserving the reveal's opacity and movement.
+
 ## 2.0.3 — 2026-10-20
 
 - Remove Top from all seven perspective selectors.

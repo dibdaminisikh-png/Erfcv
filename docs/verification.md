@@ -72,3 +72,13 @@ All seven models total 10,777,726 bytes of binary geometry. Largest single assem
 - Geometry counts remained equal to the original part counts. The complete seven-case sequence and all transitions requested exactly the existing 34 mesh files, with no additional geometry downloads.
 - Prepared the blend shaders and wire indices before the poster is removed to avoid a first-selection compilation hitch. A measured cold Mesh selection progressed smoothly to its target in approximately 300 ms.
 - Actual interface checks in Chrome touch emulation and desktop Edge passed both remaining perspective buttons, intermediate rendered poses, all three Display modes and separation controls in every case. All four surgical stages also remained functional; no application errors or failed asset requests were observed.
+
+## 2.0.4 Scroll scheduling and viewer reuse
+
+- Reproduced the scroll pauses with frame timestamps, Long Tasks and Long Animation Frames in Chrome at 1440×1000. The downward pass used 75 wheel inputs of 190 px, spaced 145 ms apart, followed by the footer's Back to top link.
+- In the same local cold-pass profile, downward JavaScript long tasks fell from 7 (459 ms blocking time) to 0. Back to top fell from 3 long tasks (249 ms blocking time) to 0, and stopped constructing all seven intermediate viewers.
+- Worst recorded frame intervals changed from 300.3 to 91.8 ms downward and from 183.5 to 8.5 ms on return; the remaining two downward intervals above 50 ms had no attributed JavaScript and no blocking long task. These are local comparative measurements, not a frame-rate guarantee for every device.
+- Complete anatomical posters remain visible during continuous scrolling. A shared queue waits for 180 ms of scroll quiet, prioritizes the nearest view, yields between mesh preparations and cancels work for views passed during navigation.
+- Verified reuse of the same canvas on a short reversal, a maximum of three cached case canvases, and exact preserved rendering after a cache hit and after eviction/restoration of Side + Mesh + 72% separation.
+- Offscreen renderers stopped drawing; resuming restored the selected targets, including changes made while paused. Aborted staged initialization removed its canvas. Existing initialization-failure and context-loss Retry checks passed for both gallery and surgery.
+- Chrome mobile and desktop Edge interface checks passed all seven perspective/Display/separation controls and all four surgical stages, without application errors or failed asset responses.

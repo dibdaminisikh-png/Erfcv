@@ -1,4 +1,4 @@
-import * as THREE from "./assets/three.module.min.js?v=334208fa7029";
+import * as THREE from "./assets/three.module.min.js?v=f2f46d3cdc7c";
 
 let manifestPromise;
 const buffers = new Map();
@@ -53,7 +53,7 @@ function parseMesh(buffer) {
 export async function createProjectViewer(
   container,
   category,
-  { signal, onProgress, state = {} } = {},
+  { signal, onProgress, state = {}, beforeWork = () => Promise.resolve() } = {},
 ) {
   const started = performance.now();
   manifestPromise ||= fetch(assetURL("assets/projects/manifest.json"))
@@ -78,6 +78,8 @@ export async function createProjectViewer(
     }),
   );
   signal?.throwIfAborted();
+  await beforeWork();
+  signal?.throwIfAborted();
   const scene = new THREE.Scene();
   const model = new THREE.Group(),
     pivot = new THREE.Group();
@@ -85,7 +87,10 @@ export async function createProjectViewer(
     observer;
   const events = new AbortController();
   let disposed = false,
-    frame = 0;
+    frame = 0,
+    paused = false,
+    dirty = false,
+    needsResize = false;
   const cleanMeshes = () => {
     const geometries = new Set(),
       materials = new Set();
@@ -114,6 +119,8 @@ export async function createProjectViewer(
   }
   try {
     for (const source of sources) {
+      await beforeWork();
+      signal?.throwIfAborted();
       const implant = source.kind === "implant",
         graft = source.kind === "graft";
       const mesh = new THREE.Mesh(
@@ -128,6 +135,8 @@ export async function createProjectViewer(
       mesh.userData.kind = source.kind;
       model.add(mesh);
     }
+    await beforeWork();
+    signal?.throwIfAborted();
     renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -263,12 +272,12 @@ export async function createProjectViewer(
       }
     }
     function request() {
-      if (!frame && !disposed && (angleTween || displayTween))
+      if (!frame && !disposed && !paused && (angleTween || displayTween))
         frame = requestAnimationFrame(tick);
     }
     function tick(time) {
       frame = 0;
-      if (disposed) return;
+      if (disposed || paused) return;
       advance(time);
       render();
       request();
@@ -284,13 +293,14 @@ export async function createProjectViewer(
       angleTween = null;
       stopIdleFrame();
     }
-    function settle() {
+    function settle(draw = true) {
       if (angleTween) pivot.quaternion.copy(angleTween.to);
       if (displayTween) Object.assign(display, displayTween.to);
       angleTween = displayTween = null;
       stopIdleFrame();
       applyDisplay();
-      render();
+      if (draw) render();
+      else dirty = true;
     }
     reducedMotion.addEventListener(
       "change",
@@ -299,16 +309,21 @@ export async function createProjectViewer(
     );
     function render() {
       if (disposed) return;
+      if (paused) { dirty = true; return; }
       pivot.position.copy(pan);
       camera.position.set(0, -distance, distance * 0.11);
       camera.lookAt(0, 0, 0);
       renderer.render(scene, camera);
+      dirty = false;
     }
     function resize() {
+      if (paused) { needsResize = true; return; }
       const w = container.clientWidth,
         h = container.clientHeight;
       if (!w || !h || disposed) return;
-      renderer.setSize(w, h);
+      const size = renderer.getSize(new THREE.Vector2());
+      if (size.x !== w || size.y !== h) renderer.setSize(w, h);
+      needsResize = false;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       render();
@@ -452,8 +467,6 @@ export async function createProjectViewer(
       { signal: events.signal },
     );
     container.append(canvas);
-    observer = new ResizeObserver(resize);
-    observer.observe(container);
     function reset() {
       interruptAngle();
       distance = 9.2;
@@ -461,16 +474,24 @@ export async function createProjectViewer(
       pivot.rotation.set(0, 0, -0.28);
       render();
     }
+    await beforeWork();
+    signal?.throwIfAborted();
     setSeparation(separation);
     if (!reducedMotion.matches) {
       // Prepare the blend shaders and shared wire indices behind the poster,
       // so the first Display selection animates without a compilation hitch.
+      await beforeWork();
+      signal?.throwIfAborted();
       Object.assign(display, { anatomy: 0.5, implant: 0.5, wire: 0.5 });
       applyDisplay();
       render();
     }
+    await beforeWork();
+    signal?.throwIfAborted();
     setView(view, { animate: false });
     resize();
+    observer = new ResizeObserver(resize);
+    observer.observe(container);
     signal?.throwIfAborted();
     try {
       performance.measure("model:" + category, {
@@ -483,6 +504,19 @@ export async function createProjectViewer(
       zoom,
       setSeparation,
       setView,
+      pause() {
+        if (disposed || paused) return;
+        paused = true;
+        if (angleTween || displayTween) settle(false);
+      },
+      resume() {
+        if (disposed || !paused) return;
+        paused = false;
+        advance(performance.now());
+        if (needsResize) resize();
+        else if (dirty) render();
+        request();
+      },
       setMode(value) {
         mode = value;
         canvas.style.cursor = mode === "pan" ? "move" : "grab";
@@ -510,6 +544,7 @@ export async function createProjectViewer(
           separation,
           view,
           display: { ...display },
+          paused,
           transitions: {
             perspective: Boolean(angleTween), display: Boolean(displayTween),
           },
@@ -536,6 +571,12 @@ export async function createProjectViewer(
 }
 
 // Share downloaded anatomy without starting another project viewer.
-export async function loadProjectGeometry(file, { signal } = {}) {
-  return parseMesh(await getBuffer(file, signal));
+export async function loadProjectGeometry(
+  file,
+  { signal, beforeWork = () => Promise.resolve() } = {},
+) {
+  const buffer = await getBuffer(file, signal);
+  await beforeWork();
+  signal?.throwIfAborted();
+  return parseMesh(buffer);
 }

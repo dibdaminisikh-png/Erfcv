@@ -1,3 +1,5 @@
+import { holdVisualWork, scheduleVisualWork, waitForScrollIdle } from "./visual-work.js?v=f2f46d3cdc7c";
+
 export function initializeExperience(reducedMotion) {
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
   initializeReveals(reducedMotion);
@@ -107,7 +109,7 @@ function initializeSmoothScroll(reducedMotion, finePointer) {
     }
     if (lenis) return;
     try {
-      const { default: Lenis } = await import("./assets/lenis.js?v=334208fa7029");
+      const { default: Lenis } = await import("./assets/lenis.js?v=f2f46d3cdc7c");
       if (revision !== pending || reducedMotion.matches || !finePointer.matches)
         return;
       lenis = new Lenis({
@@ -134,7 +136,6 @@ function initializeSmoothScroll(reducedMotion, finePointer) {
   }
   document.addEventListener("click", (event) => {
     if (
-      !lenis ||
       event.defaultPrevented ||
       event.button !== 0 ||
       event.metaKey ||
@@ -161,6 +162,8 @@ function initializeSmoothScroll(reducedMotion, finePointer) {
       return;
     }
     if (!target) return;
+    holdVisualWork();
+    if (!lenis) return;
     event.preventDefault();
     const destination = Math.max(
       0,
@@ -250,6 +253,8 @@ function initializeSurgicalStory(reducedMotion) {
   let stage = 0,
     viewer = null,
     loading = null,
+    loadController = null,
+    near = false,
     playing = false,
     timer = 0;
   function stop() {
@@ -346,29 +351,56 @@ function initializeSurgicalStory(reducedMotion) {
   }
   retry.addEventListener("click", () => load());
   async function load() {
-    if (viewer || loading) return;
+    if (viewer || loading || !near) return;
+    const controller = new AbortController();
+    loadController = controller;
     diagram.classList.add("journey-loading");
     diagram.classList.remove("journey-unavailable");
     retry.hidden = true;
-    loading = import("./surgical-journey.js?v=334208fa7029")
-      .then(async ({ createSurgicalJourney }) => {
-        viewer = await createSurgicalJourney(
+    loading = scheduleVisualWork(async () => {
+        const { createSurgicalJourney } = await import("./surgical-journey.js?v=f2f46d3cdc7c");
+        controller.signal.throwIfAborted();
+        const nextViewer = await createSurgicalJourney(
           section.querySelector(".journey-canvas"),
-          { reducedMotion: reducedMotion.matches, onError: unavailable },
+          {
+            reducedMotion: reducedMotion.matches,
+            onError: unavailable,
+            signal: controller.signal,
+            beforeWork: () => waitForScrollIdle(controller.signal),
+          },
         );
+        if (controller.signal.aborted) { nextViewer.dispose(); return; }
+        viewer = nextViewer;
         viewer.setReducedMotion(reducedMotion.matches);
         viewer.setStage(stage);
+      }, {
+        signal: controller.signal,
+        priority: () => {
+          const rect = diagram.getBoundingClientRect();
+          return Math.abs(rect.top + rect.height / 2 - innerHeight / 2);
+        },
       })
-      .catch(unavailable)
+      .catch((error) => { if (!controller.signal.aborted) unavailable(error); })
       .finally(() => {
+        if (loadController !== controller) return;
         diagram.classList.remove("journey-loading");
         loading = null;
+        loadController = null;
       });
   }
   new IntersectionObserver(
     (entries) => {
-      if (entries[0].isIntersecting) load();
-      else if (playing) stop();
+      near = entries[0].isIntersecting;
+      if (near) load();
+      else {
+        if (!viewer && loadController) {
+          loadController.abort();
+          loadController = null;
+          loading = null;
+          diagram.classList.remove("journey-loading");
+        }
+        if (playing) stop();
+      }
     },
     { rootMargin: "250px 0px" },
   ).observe(section);

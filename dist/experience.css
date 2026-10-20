@@ -283,8 +283,7 @@ html.lenis.lenis-smooth {
 .experience-motion [data-reveal="case"] .case-layout {
   transition:
     opacity 1.05s,
-    transform 1.15s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 1.15s;
+    transform 1.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .experience-motion [data-reveal="case"]:not(.is-revealed) .case-layout {
   opacity: 0;

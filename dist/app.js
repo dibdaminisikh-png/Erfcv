@@ -1,4 +1,5 @@
-import { initializeExperience } from "./experience.js?v=334208fa7029";
+import { initializeExperience } from "./experience.js?v=f2f46d3cdc7c";
+import { scheduleVisualWork, waitForScrollIdle } from "./visual-work.js?v=f2f46d3cdc7c";
 
 const menu = document.querySelector(".menu-button");
 const navigation = document.querySelector("#navigation");
@@ -96,13 +97,14 @@ const studies = [...document.querySelectorAll("[data-case]")].map(
     viewer: null,
     pending: null,
     near: false,
+    touchedAt: 0,
     state: { separation: 0, view: "solid", mode: "rotate" },
     angle: null,
   }),
 );
 let viewerModule;
 const getViewerModule = () =>
-  (viewerModule ||= import("./viewer.js?v=334208fa7029").catch((error) => {
+  (viewerModule ||= import("./viewer.js?v=f2f46d3cdc7c").catch((error) => {
     viewerModule = null;
     throw error;
   }));
@@ -130,55 +132,73 @@ function pressGroup(study, attribute, value) {
     );
 }
 async function activate(study) {
-  if (study.viewer || study.pending || document.hidden) return;
+  if (document.hidden) return;
+  study.touchedAt = performance.now();
+  if (study.viewer) {
+    study.article.classList.remove("dormant");
+    study.viewer.resume();
+    return;
+  }
+  if (study.pending) return;
   const controller = new AbortController();
   study.pending = controller;
-  study.article.classList.remove("dormant", "failed");
-  study.article.classList.add("is-loading");
-  study.label.textContent = "PREPARING ANATOMY";
-  study.hint.textContent = "Loading the complete 3D assembly";
-  study.retry.hidden = true;
-  study.loading.style.setProperty("--load", "0%");
-  const timeout = setTimeout(() => {
-    if (study.pending !== controller || controller.signal.aborted) return;
-    study.label.textContent = "TAKING A LITTLE LONGER";
-    study.hint.textContent =
-      "The page is ready. Your model will appear as soon as it downloads.";
-    study.retry.hidden = false;
-  }, 6000);
+  let timeout = 0;
   const started = performance.now();
   try {
-    const { createProjectViewer } = await getViewerModule();
-    controller.signal.throwIfAborted();
-    const next = await createProjectViewer(study.host, study.key, {
+    await scheduleVisualWork(async () => {
+      study.article.classList.remove("dormant", "failed");
+      study.article.classList.add("is-loading");
+      study.label.textContent = "PREPARING ANATOMY";
+      study.hint.textContent = "Loading the complete 3D assembly";
+      study.retry.hidden = true;
+      study.loading.style.setProperty("--load", "0%");
+      timeout = setTimeout(() => {
+        if (study.pending !== controller || controller.signal.aborted) return;
+        study.label.textContent = "TAKING A LITTLE LONGER";
+        study.hint.textContent = "The page is ready. Your model will appear as soon as it downloads.";
+        study.retry.hidden = false;
+      }, 6000);
+      trimViewerCache(study);
+      await waitForScrollIdle(controller.signal);
+      const { createProjectViewer } = await getViewerModule();
+      controller.signal.throwIfAborted();
+      const next = await createProjectViewer(study.host, study.key, {
+        signal: controller.signal,
+        state: study.state,
+        beforeWork: () => waitForScrollIdle(controller.signal),
+        onProgress: (p) =>
+          study.loading.style.setProperty("--load", Math.round(p * 100) + "%"),
+      });
+      if (controller.signal.aborted || study.pending !== controller) {
+        next.dispose();
+        return;
+      }
+      study.viewer = next;
+      next.setSeparation(study.state.separation);
+      next.setView(study.state.view);
+      next.setMode(study.state.mode);
+      if (study.angle) {
+        next.setAngle(study.angle);
+        study.angle = null;
+      }
+      study.article.classList.add("ready");
+      study.article.dataset.loadMs = Math.round(performance.now() - started);
+      study.article.dispatchEvent(
+        new CustomEvent("model-ready", {
+          bubbles: true,
+          detail: {
+            key: study.key,
+            milliseconds: Number(study.article.dataset.loadMs),
+          },
+        }),
+      );
+    }, {
       signal: controller.signal,
-      state: study.state,
-      onProgress: (p) =>
-        study.loading.style.setProperty("--load", Math.round(p * 100) + "%"),
+      priority: () => {
+        const rect = study.stage.getBoundingClientRect();
+        return Math.abs(rect.top + rect.height / 2 - innerHeight / 2);
+      },
     });
-    if (controller.signal.aborted || study.pending !== controller) {
-      next.dispose();
-      return;
-    }
-    study.viewer = next;
-    next.setSeparation(study.state.separation);
-    next.setView(study.state.view);
-    next.setMode(study.state.mode);
-    if (study.angle) {
-      next.setAngle(study.angle);
-      study.angle = null;
-    }
-    study.article.classList.add("ready");
-    study.article.dataset.loadMs = Math.round(performance.now() - started);
-    study.article.dispatchEvent(
-      new CustomEvent("model-ready", {
-        bubbles: true,
-        detail: {
-          key: study.key,
-          milliseconds: Number(study.article.dataset.loadMs),
-        },
-      }),
-    );
   } catch (error) {
     if (controller.signal.aborted || study.pending !== controller) return;
     study.viewer?.dispose();
@@ -199,17 +219,27 @@ async function activate(study) {
     }
   }
 }
-function deactivate(study) {
+function deactivate(study, { retain = false } = {}) {
   study.pending?.abort();
   study.pending = null;
   study.article.classList.remove("is-loading");
   if (study.viewer) {
     study.state = { ...study.state, ...study.viewer.getState() };
-    study.viewer.dispose();
-    study.viewer = null;
+    if (retain) study.viewer.pause();
+    else {
+      study.viewer.dispose();
+      study.viewer = null;
+    }
   }
-  study.article.classList.remove("ready");
+  if (!study.viewer) study.article.classList.remove("ready");
   study.article.classList.add("dormant");
+}
+function trimViewerCache(incoming) {
+  const retained = studies.filter((study) => study !== incoming && study.viewer);
+  // Three paused/visible viewers keep short reversals warm without accumulating
+  // a WebGL context for every case. Eviction happens only in the idle work queue.
+  retained.sort((a, b) => Number(a.near) - Number(b.near) || a.touchedAt - b.touchedAt);
+  while (retained.length >= 3) deactivate(retained.shift());
 }
 for (const study of studies) {
   const poster = study.article.querySelector(".model-poster");
@@ -310,18 +340,18 @@ document.addEventListener("fullscreenchange", () => {
 const nearObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
-      const study = studies.find((s) => s.article === entry.target);
+      const study = studies.find((s) => s.stage === entry.target);
       study.near = entry.isIntersecting;
       if (study.near) activate(study);
-      else deactivate(study);
+      else deactivate(study, { retain: true });
     });
   },
   { rootMargin: "300px 0px", threshold: 0 },
 );
-studies.forEach((s) => nearObserver.observe(s.article));
+studies.forEach((s) => nearObserver.observe(s.stage));
 document.addEventListener("visibilitychange", () =>
   studies.forEach((s) => {
-    if (document.hidden) deactivate(s);
+    if (document.hidden) deactivate(s, { retain: true });
     else if (s.near) activate(s);
   }),
 );

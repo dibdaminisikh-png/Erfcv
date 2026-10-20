@@ -1,13 +1,19 @@
-import * as THREE from "./assets/three.module.min.js?v=334208fa7029";
-import { loadProjectGeometry } from "./viewer.js?v=334208fa7029";
+import * as THREE from "./assets/three.module.min.js?v=f2f46d3cdc7c";
+import { loadProjectGeometry } from "./viewer.js?v=f2f46d3cdc7c";
 
 // An illustrative reconstruction sequence built on the portfolio's mandibular anatomy.
 export async function createSurgicalJourney(
   host,
-  { reducedMotion = false, onError = () => {} } = {},
+  { reducedMotion = false, onError = () => {}, signal, beforeWork = () => Promise.resolve() } = {},
 ) {
+  const checkpoint = async () => {
+    await beforeWork();
+    signal?.throwIfAborted();
+  };
+  await checkpoint();
   const geometry = await loadProjectGeometry(
     "assets/projects/mandibular-1.mesh",
+    { signal, beforeWork },
   );
   geometry.computeBoundingBox();
   const center = geometry.boundingBox.getCenter(new THREE.Vector3());
@@ -76,6 +82,7 @@ export async function createSurgicalJourney(
     }
   }
   try {
+    await checkpoint();
     renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -357,6 +364,7 @@ export async function createSurgicalJourney(
       hole.position.copy(point);
       prosthesis.add(hole);
     }
+    await checkpoint();
     host.append(renderer.domElement);
     const scanner = diagram.querySelector(".operative-scanner"),
       reticle = diagram.querySelector(".lesion-reticle"),
@@ -515,7 +523,6 @@ export async function createSurgicalJourney(
       if (!motionReduced && (stage === 0 || elapsed < 1)) request();
     }
     observer = new ResizeObserver(resize);
-    observer.observe(host);
     visibility = new IntersectionObserver(
       (entries) => {
         visible = entries[0].isIntersecting;
@@ -527,7 +534,6 @@ export async function createSurgicalJourney(
       },
       { threshold: 0.05 },
     );
-    visibility.observe(diagram);
     onVisibility = () => {
       if (document.hidden && frame) {
         cancelAnimationFrame(frame);
@@ -540,8 +546,11 @@ export async function createSurgicalJourney(
       dispose();
       onError(new Error("WebGL context lost"));
     }, { signal: events.signal });
+    await checkpoint();
     resize();
     renderer.render(scene, camera);
+    observer.observe(host);
+    visibility.observe(diagram);
     diagram.classList.add("journey-ready");
     return {
       setStage(index) {

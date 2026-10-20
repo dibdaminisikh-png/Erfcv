@@ -32,7 +32,7 @@ await readFile("dist/assets/lenis.js");
 // One fingerprint for the whole release prevents cached modules from different
 // deployments from sharing incompatible viewer APIs or geometry manifests.
 const sourceFiles = [
-  "app.js", "experience.js", "viewer.js", "surgical-journey.js",
+  "app.js", "experience.js", "viewer.js", "surgical-journey.js", "visual-work.js",
   "style.css", "dark.css", "portfolio.css", "experience.css", "index.html",
 ];
 const unversion = (text) => text.replace(/\?v=[a-f0-9]{12}/g, "");
