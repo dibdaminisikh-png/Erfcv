@@ -1,4 +1,4 @@
-import { holdVisualWork, scheduleVisualWork, waitForScrollIdle } from "./visual-work.js?v=f2f46d3cdc7c";
+import { holdVisualWork, scheduleVisualWork, waitForScrollIdle } from "./visual-work.js?v=c6556c939e6b";
 
 export function initializeExperience(reducedMotion) {
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
@@ -109,7 +109,7 @@ function initializeSmoothScroll(reducedMotion, finePointer) {
     }
     if (lenis) return;
     try {
-      const { default: Lenis } = await import("./assets/lenis.js?v=f2f46d3cdc7c");
+      const { default: Lenis } = await import("./assets/lenis.js?v=c6556c939e6b");
       if (revision !== pending || reducedMotion.matches || !finePointer.matches)
         return;
       lenis = new Lenis({
@@ -358,7 +358,7 @@ function initializeSurgicalStory(reducedMotion) {
     diagram.classList.remove("journey-unavailable");
     retry.hidden = true;
     loading = scheduleVisualWork(async () => {
-        const { createSurgicalJourney } = await import("./surgical-journey.js?v=f2f46d3cdc7c");
+        const { createSurgicalJourney } = await import("./surgical-journey.js?v=c6556c939e6b");
         controller.signal.throwIfAborted();
         const nextViewer = await createSurgicalJourney(
           section.querySelector(".journey-canvas"),

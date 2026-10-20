@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.5 — 2026-10-20
+
+- Reactivate evicted models on direct interaction, including controls on tall displays containing more visible cards than the three-viewer cache budget.
+
 ## 2.0.4 — 2026-10-20
 
 - Defer and serialize WebGL initialization until scrolling settles, with cancellation for models passed during fast navigation.

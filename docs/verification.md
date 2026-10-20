@@ -82,3 +82,4 @@ All seven models total 10,777,726 bytes of binary geometry. Largest single assem
 - Verified reuse of the same canvas on a short reversal, a maximum of three cached case canvases, and exact preserved rendering after a cache hit and after eviction/restoration of Side + Mesh + 72% separation.
 - Offscreen renderers stopped drawing; resuming restored the selected targets, including changes made while paused. Aborted staged initialization removed its canvas. Existing initialization-failure and context-loss Retry checks passed for both gallery and surgery.
 - Chrome mobile and desktop Edge interface checks passed all seven perspective/Display/separation controls and all four surgical stages, without application errors or failed asset responses.
+- At 1440×3200, a visible case evicted by the three-viewer budget successfully reloaded through its Display control while the retained canvas count stayed at three.

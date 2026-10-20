@@ -1,5 +1,5 @@
-import { initializeExperience } from "./experience.js?v=f2f46d3cdc7c";
-import { scheduleVisualWork, waitForScrollIdle } from "./visual-work.js?v=f2f46d3cdc7c";
+import { initializeExperience } from "./experience.js?v=c6556c939e6b";
+import { scheduleVisualWork, waitForScrollIdle } from "./visual-work.js?v=c6556c939e6b";
 
 const menu = document.querySelector(".menu-button");
 const navigation = document.querySelector("#navigation");
@@ -104,7 +104,7 @@ const studies = [...document.querySelectorAll("[data-case]")].map(
 );
 let viewerModule;
 const getViewerModule = () =>
-  (viewerModule ||= import("./viewer.js?v=f2f46d3cdc7c").catch((error) => {
+  (viewerModule ||= import("./viewer.js?v=c6556c939e6b").catch((error) => {
     viewerModule = null;
     throw error;
   }));
@@ -249,9 +249,15 @@ for (const study of studies) {
   };
   poster.addEventListener("load", posterReady);
   if (poster.complete && poster.naturalWidth) posterReady();
-  study.slider.addEventListener("input", () =>
-    updateSlider(study, study.slider.value),
-  );
+  study.slider.addEventListener("input", () => {
+    updateSlider(study, study.slider.value);
+    if (!study.viewer) activate(study);
+  });
+  // A tall viewport can contain more cards than the retained-viewer budget.
+  // Explicit interaction always brings an evicted card back into the queue.
+  study.stage.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && !study.viewer) activate(study);
+  });
   study.host.addEventListener("viewer-context-lost", () => {
     deactivate(study);
     study.article.classList.remove("dormant");
@@ -263,6 +269,7 @@ for (const study of studies) {
   study.article.addEventListener("click", async (event) => {
     const button = event.target.closest("button");
     if (!button) return;
+    if (!study.viewer && button.dataset.action !== "retry") activate(study);
     if (button.dataset.mode) {
       study.state.mode = button.dataset.mode;
       study.viewer?.setMode(study.state.mode);
