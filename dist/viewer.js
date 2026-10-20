@@ -1,4 +1,4 @@
-import * as THREE from "./assets/three.module.min.js?v=b79b551e19c7";
+import * as THREE from "./assets/three.module.min.js?v=334208fa7029";
 
 let manifestPromise;
 const buffers = new Map();
@@ -81,17 +81,26 @@ export async function createProjectViewer(
   const scene = new THREE.Scene();
   const model = new THREE.Group(),
     pivot = new THREE.Group();
-  let renderer, observer;
+  let renderer,
+    observer;
   const events = new AbortController();
-  let disposed = false;
-  const cleanMeshes = () =>
+  let disposed = false,
+    frame = 0;
+  const cleanMeshes = () => {
+    const geometries = new Set(),
+      materials = new Set();
     model.traverse((o) => {
-      o.geometry?.dispose();
-      o.material?.dispose();
+      if (o.geometry) geometries.add(o.geometry);
+      if (o.material) materials.add(o.material);
     });
+    geometries.forEach((geometry) => geometry.dispose());
+    materials.forEach((material) => material.dispose());
+  };
   function dispose() {
     if (disposed) return;
     disposed = true;
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
     events.abort();
     observer?.disconnect();
     cleanMeshes();
@@ -170,6 +179,124 @@ export async function createProjectViewer(
       view = state.view || "solid";
     const pan = new THREE.Vector3(...(state.pan || [0, 0, 0]));
     pivot.rotation.set(...(state.rotation || [0, 0, -0.28]));
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    const displayStates = {
+      solid: { anatomy: 1, implant: 1, wire: 0 },
+      xray: { anatomy: 0.18, implant: 1, wire: 0 },
+      wire: { anatomy: 0, implant: 0, wire: 1 },
+      implant: { anatomy: 0, implant: 1, wire: 0 },
+    };
+    if (!displayStates[view]) view = "solid";
+    const display = { ...displayStates[view] };
+    let angleTween = null,
+      displayTween = null;
+
+    function wireLayer(mesh) {
+      if (!mesh.userData.wireLayer) {
+        // Share the original vertex buffers; only the material is added.
+        const material = mesh.material.clone();
+        material.wireframe = true;
+        material.visible = true;
+        material.polygonOffset = false;
+        material.transparent = true;
+        material.opacity = 0;
+        material.depthWrite = false;
+        // Wire lines have no front/back faces to blend twice.
+        material.forceSinglePass = true;
+        const wire = new THREE.Mesh(mesh.geometry, material);
+        wire.visible = false;
+        wire.renderOrder = 1;
+        mesh.add(wire);
+        mesh.userData.wireLayer = wire;
+      }
+      return mesh.userData.wireLayer;
+    }
+    function setOpacity(material, opacity) {
+      const transparent = opacity < 0.9999;
+      if (material.transparent !== transparent) {
+        material.transparent = transparent;
+        material.needsUpdate = true;
+      }
+      material.opacity = opacity;
+      material.depthWrite = !transparent;
+    }
+    function applyDisplay() {
+      for (const mesh of model.children) {
+        const opacity = mesh.userData.kind === "implant"
+          ? display.implant
+          : display.anatomy;
+        const surfaceVisible = opacity > 0.0001;
+        const wireVisible = display.wire > 0.0001;
+        mesh.visible = surfaceVisible || wireVisible;
+        mesh.material.visible = surfaceVisible;
+        setOpacity(mesh.material, opacity);
+        // Offset the filled surface during the crossfade to avoid flickering lines.
+        mesh.material.polygonOffset = surfaceVisible && wireVisible;
+        mesh.material.polygonOffsetFactor = 1;
+        mesh.material.polygonOffsetUnits = 1;
+        const wire = wireVisible ? wireLayer(mesh) : mesh.userData.wireLayer;
+        if (wire) {
+          wire.visible = wireVisible;
+          setOpacity(wire.material, display.wire);
+        }
+      }
+    }
+    function advance(time) {
+      if (angleTween) {
+        const t = THREE.MathUtils.clamp((time - angleTween.start) / 500, 0, 1);
+        pivot.quaternion.slerpQuaternions(
+          angleTween.from,
+          angleTween.to,
+          THREE.MathUtils.smootherstep(t, 0, 1),
+        );
+        if (t === 1) angleTween = null;
+      }
+      if (displayTween) {
+        const t = THREE.MathUtils.clamp((time - displayTween.start) / 300, 0, 1);
+        const ease = THREE.MathUtils.smootherstep(t, 0, 1);
+        for (const key of Object.keys(display))
+          display[key] = THREE.MathUtils.lerp(
+            displayTween.from[key], displayTween.to[key], ease,
+          );
+        if (t === 1) displayTween = null;
+        applyDisplay();
+      }
+    }
+    function request() {
+      if (!frame && !disposed && (angleTween || displayTween))
+        frame = requestAnimationFrame(tick);
+    }
+    function tick(time) {
+      frame = 0;
+      if (disposed) return;
+      advance(time);
+      render();
+      request();
+    }
+    function stopIdleFrame() {
+      if (!angleTween && !displayTween && frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+    }
+    function interruptAngle() {
+      advance(performance.now());
+      angleTween = null;
+      stopIdleFrame();
+    }
+    function settle() {
+      if (angleTween) pivot.quaternion.copy(angleTween.to);
+      if (displayTween) Object.assign(display, displayTween.to);
+      angleTween = displayTween = null;
+      stopIdleFrame();
+      applyDisplay();
+      render();
+    }
+    reducedMotion.addEventListener(
+      "change",
+      () => { if (reducedMotion.matches) settle(); },
+      { signal: events.signal },
+    );
     function render() {
       if (disposed) return;
       pivot.position.copy(pan);
@@ -194,15 +321,42 @@ export async function createProjectViewer(
           .multiplyScalar(mesh.userData.kind === "implant" ? separation : 0);
       render();
     }
-    function setView(value) {
+    function setView(value, { animate = true } = {}) {
+      if (disposed || !displayStates[value]) return;
+      advance(performance.now());
       view = value;
-      for (const mesh of model.children) {
-        mesh.visible = value !== "implant" || mesh.userData.kind === "implant";
-        mesh.material.wireframe = value === "wire";
-        mesh.material.transparent =
-          value === "xray" && mesh.userData.kind !== "implant";
-        mesh.material.opacity = mesh.material.transparent ? 0.18 : 1;
-        mesh.material.depthWrite = !mesh.material.transparent;
+      const target = displayStates[value];
+      if (
+        !animate || reducedMotion.matches ||
+        Object.keys(display).every((key) => display[key] === target[key])
+      ) {
+        Object.assign(display, target);
+        displayTween = null;
+        applyDisplay();
+        stopIdleFrame();
+      } else {
+        displayTween = {
+          from: { ...display }, to: { ...target }, start: performance.now(),
+        };
+        request();
+      }
+      render();
+    }
+    function setAngle(value) {
+      if (disposed || !["front", "side"].includes(value)) return;
+      advance(performance.now());
+      const target = new THREE.Quaternion().setFromEuler(
+        new THREE.Euler(0, 0, value === "side" ? Math.PI / 2 : 0),
+      );
+      if (reducedMotion.matches || pivot.quaternion.angleTo(target) < 0.000001) {
+        pivot.quaternion.copy(target);
+        angleTween = null;
+        stopIdleFrame();
+      } else {
+        angleTween = {
+          from: pivot.quaternion.clone(), to: target, start: performance.now(),
+        };
+        request();
       }
       render();
     }
@@ -216,6 +370,7 @@ export async function createProjectViewer(
     let pinch;
     on("contextmenu", (e) => e.preventDefault());
     on("pointerdown", (e) => {
+      interruptAngle();
       pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       canvas.setPointerCapture(e.pointerId);
       if (pointers.size === 2) {
@@ -278,6 +433,7 @@ export async function createProjectViewer(
       )
         return;
       e.preventDefault();
+      if (e.key.startsWith("Arrow")) interruptAngle();
       if (e.key === "ArrowLeft") pivot.rotation.z -= 0.14;
       if (e.key === "ArrowRight") pivot.rotation.z += 0.14;
       if (e.key === "ArrowUp") pivot.rotation.x -= 0.14;
@@ -299,13 +455,21 @@ export async function createProjectViewer(
     observer = new ResizeObserver(resize);
     observer.observe(container);
     function reset() {
+      interruptAngle();
       distance = 9.2;
       pan.set(0, 0, 0);
       pivot.rotation.set(0, 0, -0.28);
       render();
     }
     setSeparation(separation);
-    setView(view);
+    if (!reducedMotion.matches) {
+      // Prepare the blend shaders and shared wire indices behind the poster,
+      // so the first Display selection animates without a compilation hitch.
+      Object.assign(display, { anatomy: 0.5, implant: 0.5, wire: 0.5 });
+      applyDisplay();
+      render();
+    }
+    setView(view, { animate: false });
     resize();
     signal?.throwIfAborted();
     try {
@@ -323,19 +487,14 @@ export async function createProjectViewer(
         mode = value;
         canvas.style.cursor = mode === "pan" ? "move" : "grab";
       },
-      setAngle(value) {
-        pivot.rotation.set(
-          value === "top" ? 1.2 : 0,
-          0,
-          value === "side" ? Math.PI / 2 : value === "front" ? 0 : -0.28,
-        );
-        render();
-      },
+      setAngle,
       getState() {
         return {
           distance,
           pan: pan.toArray(),
-          rotation: pivot.rotation.toArray().slice(0, 3),
+          rotation: (angleTween
+            ? new THREE.Euler().setFromQuaternion(angleTween.to)
+            : pivot.rotation).toArray().slice(0, 3),
           mode,
           separation,
           view,
@@ -349,6 +508,15 @@ export async function createProjectViewer(
           implants: model.children.filter((x) => x.userData.kind === "implant")
             .length,
           separation,
+          view,
+          display: { ...display },
+          transitions: {
+            perspective: Boolean(angleTween), display: Boolean(displayTween),
+          },
+          frames: renderer.info.render.frame,
+          drawCalls: renderer.info.render.calls,
+          geometries: renderer.info.memory.geometries,
+          wireLayers: model.children.filter((mesh) => mesh.userData.wireLayer).length,
           positions: model.children.map((x) => ({
             kind: x.userData.kind,
             position: x.position.toArray(),

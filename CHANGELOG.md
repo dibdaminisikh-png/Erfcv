@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.3 — 2026-10-20
+
+- Remove Top from all seven perspective selectors.
+- Ease Front and Side changes over 500 ms with quaternion interpolation, including smooth retargeting and immediate handoff to manual orbit.
+- Crossfade Anatomy, X-ray and Mesh over 300 ms while keeping implants opaque during the X-ray transition.
+- Share geometry with the wire overlays, prepare blend shaders behind the poster, and stop rendering once transitions settle.
+- Preserve selected targets when a viewer is unloaded and respect the existing reduced-motion preference.
+
 ## 2.0.2 — 2026-10-20
 
 - Keep implant separation and viewer controls immediately after the anatomy, with case notes below the controls on mobile and desktop.

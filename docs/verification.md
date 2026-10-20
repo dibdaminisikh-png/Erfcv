@@ -62,3 +62,13 @@ All seven models total 10,777,726 bytes of binary geometry. Largest single assem
 - The equation displayed both plus signs and the equals sign on mobile. Expand was hidden on portrait and landscape touch screens, while native desktop fullscreen remained functional.
 - Reduced-motion disabled the contact illustration's animated connection. The vector artwork adds no image or WebGL download.
 - Desktop Edge passed all seven model controls and four surgical stages without application errors or failed asset requests.
+
+## 2.0.3 Perspective and Display transitions
+
+- Exercised all seven assemblies with intermediate rendered perspective angles, exact Front/Side target poses and intermediate opacity/wire values. Perspective uses a 500 ms eased quaternion interpolation; Display uses a 300 ms eased crossfade.
+- The implant stayed fully opaque throughout Anatomy ↔ X-ray. Returning through all Display modes restored the original anatomical rendering; raw framebuffer comparisons differed by at most one intensity level in one channel among 2,592,000 channels in the measured round trips.
+- Verified uninterrupted retargeting, manual drag cancelling a perspective transition, concurrent perspective/display changes, and restoring the selected target after unloading during a transition.
+- Confirmed no render-frame increments while idle, pending animation cancellation on disposal, and immediate stable states with reduced motion, including initialization directly in Mesh mode.
+- Geometry counts remained equal to the original part counts. The complete seven-case sequence and all transitions requested exactly the existing 34 mesh files, with no additional geometry downloads.
+- Prepared the blend shaders and wire indices before the poster is removed to avoid a first-selection compilation hitch. A measured cold Mesh selection progressed smoothly to its target in approximately 300 ms.
+- Actual interface checks in Chrome touch emulation and desktop Edge passed both remaining perspective buttons, intermediate rendered poses, all three Display modes and separation controls in every case. All four surgical stages also remained functional; no application errors or failed asset requests were observed.

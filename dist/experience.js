@@ -107,7 +107,7 @@ function initializeSmoothScroll(reducedMotion, finePointer) {
     }
     if (lenis) return;
     try {
-      const { default: Lenis } = await import("./assets/lenis.js?v=b79b551e19c7");
+      const { default: Lenis } = await import("./assets/lenis.js?v=334208fa7029");
       if (revision !== pending || reducedMotion.matches || !finePointer.matches)
         return;
       lenis = new Lenis({
@@ -350,7 +350,7 @@ function initializeSurgicalStory(reducedMotion) {
     diagram.classList.add("journey-loading");
     diagram.classList.remove("journey-unavailable");
     retry.hidden = true;
-    loading = import("./surgical-journey.js?v=b79b551e19c7")
+    loading = import("./surgical-journey.js?v=334208fa7029")
       .then(async ({ createSurgicalJourney }) => {
         viewer = await createSurgicalJourney(
           section.querySelector(".journey-canvas"),

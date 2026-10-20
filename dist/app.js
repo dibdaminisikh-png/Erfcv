@@ -1,4 +1,4 @@
-import { initializeExperience } from "./experience.js?v=b79b551e19c7";
+import { initializeExperience } from "./experience.js?v=334208fa7029";
 
 const menu = document.querySelector(".menu-button");
 const navigation = document.querySelector("#navigation");
@@ -102,7 +102,7 @@ const studies = [...document.querySelectorAll("[data-case]")].map(
 );
 let viewerModule;
 const getViewerModule = () =>
-  (viewerModule ||= import("./viewer.js?v=b79b551e19c7").catch((error) => {
+  (viewerModule ||= import("./viewer.js?v=334208fa7029").catch((error) => {
     viewerModule = null;
     throw error;
   }));
